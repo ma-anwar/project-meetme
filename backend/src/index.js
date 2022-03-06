@@ -1,21 +1,12 @@
 import "dotenv/config";
 import http from "http";
-import express from "express";
-import { ApolloServer } from "apollo-server-express";
 
-import schema from "./schema";
-import resolvers from "./resolvers";
-import models, { connectDb } from "./models";
+import server from "./server";
+import app from "./app";
+import { connectDb } from "./models";
 
-async function startApolloServer(typedefs, queryResolvers, port) {
-    const app = express();
+async function startApolloServer(port) {
     const httpServer = http.createServer(app);
-    const server = new ApolloServer({
-        introspection: true,
-        typeDefs: schema,
-        resolvers: queryResolvers,
-        context: async () => ({ models }),
-    });
     await server.start();
     server.applyMiddleware({ app, path: "/graphql" });
     httpServer.listen(port, () => {
@@ -25,4 +16,4 @@ async function startApolloServer(typedefs, queryResolvers, port) {
     });
 }
 
-connectDb().then(startApolloServer(schema, resolvers, 3000));
+connectDb().then(startApolloServer(3007));

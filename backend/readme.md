@@ -1,4 +1,4 @@
-#Setup Instructions
+# Setup Instructions
 
 1. Install [mongodb](https://docs.mongodb.com/manual/installation/) and make sure it's running
 2. `touch .env` in the root dir and configure as follows `DB_URL="mongodb://localhost:27017/<custom_name>"`
@@ -7,7 +7,8 @@
 
 Please inform me of any issues or if instructions are incomplete.
 
-#Sample Queries
+# Sample Queries
+
 After visiting Apollo studio at `http://localhost:3000/graphql`, queries can be executed as follows,
 
 To sign a user up,

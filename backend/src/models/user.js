@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
-const userSchema = new mongoose.Schema(
+const { Schema } = mongoose;
+
+const saltRounds = 10;
+
+const userSchema = Schema(
     {
         username: {
             type: String,
@@ -25,6 +30,25 @@ const userSchema = new mongoose.Schema(
         },
     }
 );
+
+const hashPass = async function (next) {
+    this.password = await bcrypt.hash(this.password, saltRounds);
+    next();
+};
+
+userSchema.pre("save", hashPass);
+
+userSchema.statics.isInUse = async function (email) {
+    return this.countDocuments({ email }).limit(1);
+};
+
+userSchema.methods.hasCorrectPass = async function (password) {
+    const hashedPass = await bcrypt.hash(password, saltRounds);
+
+    const isCorrectPass = await bcrypt.compare(this.password, hashedPass);
+    return isCorrectPass;
+};
+
 const User = mongoose.model("User", userSchema);
 
 export default User;

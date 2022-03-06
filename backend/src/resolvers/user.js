@@ -1,4 +1,4 @@
-export default {
+const userResolvers = {
     Query: {
         users: async (parent, args, { models }) => models.User.find(),
         user: async (parent, { email }, { models }) =>
@@ -17,3 +17,5 @@ export default {
         },
     },
 };
+
+export default userResolvers;

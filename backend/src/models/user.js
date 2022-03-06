@@ -21,14 +21,6 @@ const userSchema = Schema(
             required: true,
         },
     },
-    {
-        toJson: {
-            transform(doc, ret) {
-                delete ret.password;
-                return ret;
-            },
-        },
-    }
 );
 
 const hashPass = async function (next) {
@@ -43,9 +35,7 @@ userSchema.statics.isInUse = async function (email) {
 };
 
 userSchema.methods.hasCorrectPass = async function (password) {
-    const hashedPass = await bcrypt.hash(password, saltRounds);
-
-    const isCorrectPass = await bcrypt.compare(this.password, hashedPass);
+    const isCorrectPass = await bcrypt.compare(password, this.password);
     return isCorrectPass;
 };
 

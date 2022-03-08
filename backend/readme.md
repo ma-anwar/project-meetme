@@ -1,5 +1,9 @@
 # Setup Instructions
 
+If using docker then `docker-compose up`, by default server will run on `localhost:5000`.
+
+Else,
+
 1. Install [mongodb](https://docs.mongodb.com/manual/installation/) and make sure it's running
 2. `touch .env` in the root dir and configure as follows
 

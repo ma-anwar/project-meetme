@@ -5,7 +5,8 @@ If using docker then `docker-compose up`, by default server will run on `localho
 Else,
 
 1. Install [mongodb](https://docs.mongodb.com/manual/installation/) and make sure it's running
-2. `touch .env` in the root dir and configure as follows
+2. Install and ensure redis is running (defualt port should be 6379).
+3. `touch .env` in the root dir and configure as follows
 
 ```
 DB_URL="mongodb://localhost:27017/<custom_name>"

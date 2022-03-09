@@ -8,9 +8,19 @@ services:
     volumes:
       - db:/data/db
 
+  redis:
+    image: redis:latest
+    restart: always
+    expose:
+      - 6379
+    command: ["redis-server", "--bind", "redis", "--port", "6379"]
+    volumes:
+      - cache:/data/cache
+
   backend:
     depends_on:
       - mongodb
+      - redis
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -24,3 +34,4 @@ services:
       - ./backend/src:/usr/backend/src
 volumes:
   db:
+  cache:

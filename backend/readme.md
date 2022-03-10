@@ -1,11 +1,11 @@
 # Setup Instructions
 
-If using docker then `docker-compose up`, by default server will run on `localhost:5000`.
+If using docker then `docker-compose up --build` for the first time, by default server will run on `localhost:5000`.
 
 Else,
 
 1. Install [mongodb](https://docs.mongodb.com/manual/installation/) and make sure it's running
-2. Install and ensure redis is running (defualt port should be 6379).
+2. Install and ensure redis is running (default port should be 6379).
 3. `touch .env` in the root dir and configure as follows
 
 ```
@@ -22,9 +22,15 @@ Please inform me of any issues or if instructions are incomplete.
 
 # Sample Queries
 
-Use Postman to execute graphql queries for now.
+Postman can be used to execute gql queries.
 
-Apollo studio can be accessed at `http://localhost:3000/graphql`, but isn't working due to CORS issues right now.
+Apollo explorer can be accessed at `http://localhost:3000/graphql` and can provide a better UX when debugging queries. Using it involves a bit of a hack due to the fact that the GQL api is protected behind an auth layer. Essentially we want to modify our headers to send the session cookie along with out gql requests.
+
+To use explorer, do as follows:
+
+1. Search for and install the `modheader` extension for chrome/firefox.
+2. Use Postman to make a login request. Click the headers and copy the cookie key and value into the headers in modheader.
+3. Now you should be able to access the gql endpoint and make queries.
 
 Queries can be executed as follows,
 

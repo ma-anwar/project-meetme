@@ -1,6 +1,7 @@
 /* eslint-disable import/first */
 import express from "express";
 import session from "express-session";
+import cors from "cors";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -9,8 +10,17 @@ import redisClient from "./utils/redisLoader";
 import isAuthenticated from "./middleware/isAuthenticated";
 import authRouter from "./routes/authRoutes";
 
+const environment = process.env.NODE_ENV || "development";
+
 const app = express();
 
+if (environment === "development") {
+    app.use(cors());
+    app.use("/api/auth", (req, res, next) => {
+        console.log(req.body);
+        next();
+    });
+}
 const RedisStore = connectRedis(session);
 
 app.use(
@@ -24,7 +34,7 @@ app.use(
 
 app.use(express.json());
 
-app.use("/", authRouter);
+app.use("/api/auth", authRouter);
 
 app.use("/graphql", isAuthenticated);
 

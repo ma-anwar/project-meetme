@@ -1,0 +1,14 @@
+.CreateEvent {
+    color: black;
+    padding: 20px;
+    display: flex;
+    align-items:flex-start;
+    flex-direction: column;
+}
+
+.CreateEvent__container {
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

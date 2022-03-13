@@ -8,7 +8,10 @@ const server = new ApolloServer({
     introspection: true,
     typeDefs: schema,
     resolvers,
-    context: async ({ req }) => ({ models, user: req.session.user }),
+    context: async ({ req }) => {
+        const user = await models.User.findOne({ _id: req.session.user._id });
+        return { models, user };
+    },
 });
 
 export default server;

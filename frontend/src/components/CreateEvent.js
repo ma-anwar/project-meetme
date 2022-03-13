@@ -80,6 +80,7 @@ export function CreateEvent() {
                 </FormControl>
                 <TextField className="CreateEvent__item-content" placeholder="Description" name="event_desc" multiline rows={5} ref={descriptionRef}/>
                 <Button className="CreateEvent_btn" type="submit" variant="contained">Create</Button>
+                <Button variant="contained" href="/event_cal"><AddIcon/>Create Event</Button>
                 <Button className="CreateEvent_btn" type="button" variant="outlined">Cancel</Button>
             </form>
         </Grid>

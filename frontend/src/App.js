@@ -7,6 +7,7 @@ import { NavBar } from './components/NavBar';
 import { Home } from './components/Home';
 import { Profile } from './components/Profile';
 import { CreateEvent } from './components/CreateEvent';
+import { EventCalendar } from './components/EventCalendar';
 // import Error from './components/Error';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/signup" element={<SignupForm/>} />
           <Route path="/profile" element={<Profile/>} />
           <Route path="/create_event" element={<CreateEvent/>} />
+          <Route path="/event_cal" element={<EventCalendar/>} />
         </Routes>
       </header>
     </div>

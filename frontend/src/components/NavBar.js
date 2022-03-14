@@ -21,6 +21,15 @@ export function NavBar() {
             <Link className="Link_nav-links" to="/profile">
               Profile
             </Link>
+            <Link className="Link_nav-links" to="/event_cal">
+              Event Calendar
+            </Link>
+            <Link className="Link_nav-links" to="/book_appt">
+              Book Appointment
+            </Link>
+            <Link className="Link_nav-links" to="/create_event">
+              Create Event
+            </Link>
           </li>
         </ul>
       ) : (

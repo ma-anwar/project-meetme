@@ -2,7 +2,6 @@ import './CreateEvent.css';
 import { useRef, useState } from "react";
 import { Container, Typography, Button, Grid, TextField} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';

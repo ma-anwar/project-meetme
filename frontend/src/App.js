@@ -8,6 +8,7 @@ import { Home } from './components/Home';
 import { Profile } from './components/Profile';
 import { CreateEvent } from './components/CreateEvent';
 import { EventCalendar } from './components/EventCalendar';
+import { BookAppointment } from './components/BookAppointment';
 // import Error from './components/Error';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/profile" element={<Profile/>} />
           <Route path="/create_event" element={<CreateEvent/>} />
           <Route path="/event_cal" element={<EventCalendar/>} />
+          <Route path="/book_appt" element={<BookAppointment/>} />
         </Routes>
       </header>
     </div>

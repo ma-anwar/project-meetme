@@ -1,45 +1,43 @@
-import './Login.css';
-import { useRef, useState } from "react";
-import { Container, Grid, Paper, TextField, Button, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, TextField, Button } from '@mui/material';
+import { useAuth } from '../../hooks/useAuth';
 
 export function LoginForm() {
+  //TODO: Add error handling, hide password
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
 
-  const [email, setEmail] = useState("");
-  const [password, setpassword] = useState("");
+  const { login } = useAuth();
 
-  //state = {username, password};
-
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const user = {
-        email: emailRef.current.value,
-        password: passwordRef.current.value, 
-    }
-    console.log(user);
+    login(email, password);
     e.target.reset();
   };
-  
-  return (
-    <div>
-    <Container className="LoginForm__container">
-        <Grid >
-            <Paper elevation={4}>
-                <Typography className="LoginForm__title">Sign in</Typography>
-                <form className="LoginForm" onSubmit={handleSubmit}>
-                  <TextField className="LoginForm__item-content" placeholder="Enter your email" name="email" required ref={emailRef} />
-                  <TextField className="LoginForm__item-content" placeholder="Enter your password" name="password" required ref={passwordRef}/>
-                  <Button className="LoginForm_btn" type="submit" variant="contained">Log in</Button>
-                  <Typography variant="body2" className="LoginForm__signup">Don't have an account?<a href="/signup">Signup</a></Typography>
-                </form>
-            </Paper>
-        </Grid>
-    </Container>
-  </div>
-  
 
+  return (
+    <form onSubmit={handleSubmit}>
+      <Box display="flex" flexDirection="column">
+        <TextField
+          placeholder="Enter your email"
+          name="email"
+          required
+          sx={{ m: 1 }}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          placeholder="Enter your password"
+          name="password"
+          required
+          sx={{ m: 1 }}
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
+        />
+        <Button type="submit" variant="contained" sx={{ m: 1 }}>
+          Log in
+        </Button>
+      </Box>
+    </form>
   );
 }

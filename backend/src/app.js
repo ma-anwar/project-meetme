@@ -15,7 +15,11 @@ const environment = process.env.NODE_ENV || "development";
 const app = express();
 
 if (environment === "development") {
-    app.use(cors());
+    const corsOptions = {
+        origin: "http://localhost:3000",
+        credentials: true, //
+    };
+    app.use(cors(corsOptions));
     app.use("/api/auth", (req, res, next) => {
         console.log(req.body);
         next();

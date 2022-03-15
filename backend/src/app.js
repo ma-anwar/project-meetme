@@ -9,19 +9,16 @@ import connectRedis from "connect-redis";
 import redisClient from "./utils/redisLoader";
 import isAuthenticated from "./middleware/isAuthenticated";
 import authRouter from "./routes/authRoutes";
+import corsOptions from "./utils/corsOptions";
 
 const environment = process.env.NODE_ENV || "development";
 
 const app = express();
 
 if (environment === "development") {
-    const corsOptions = {
-        origin: "http://localhost:3000",
-        credentials: true, //
-    };
     app.use(cors(corsOptions));
     app.use("/api/auth", (req, res, next) => {
-        console.log(req.body);
+        console.log(`Body: ${req.body}`);
         next();
     });
 }

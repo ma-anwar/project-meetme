@@ -7,18 +7,21 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
+  const [userProfile, setUserProfile] = useState();
 
   const { loading, error, data } = useQuery(GET_ME);
 
   useEffect(() => {
     if (data) {
+      setAuthReady(true);
       setLoggedIn(true);
-      //TODO: Set usename and email so it can be access globally or just unpack data
+      const { username, email } = data.me;
+      setUserProfile({ username, email });
+    } else if (error) {
+      setAuthReady(true);
     }
-    if (error) {
-      setLoggedIn(false);
-    }
-  }, [loading, data, error]);
+  }, [data, error]);
 
   const signup = async (username, email, password) => {
     try {
@@ -55,7 +58,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ loggedIn, login, logout, signup, loading }}>
+    <AuthContext.Provider
+      value={{ loggedIn, login, logout, signup, authReady, userProfile }}
+    >
       {children}
     </AuthContext.Provider>
   );

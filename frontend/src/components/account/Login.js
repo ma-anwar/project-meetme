@@ -14,7 +14,6 @@ export function LoginForm() {
     login(email, password);
     e.target.reset();
   };
-
   return (
     <form onSubmit={handleSubmit}>
       <Box display="flex" flexDirection="column" alignItems="center">

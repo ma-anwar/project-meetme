@@ -12,7 +12,6 @@ import { useAuth } from './hooks/useAuth';
 import { Box, CircularProgress } from '@mui/material';
 
 function App() {
-  // TODO: Figure out what styling is smooshing the navbar
   const { authReady } = useAuth();
   if (!authReady) {
     return (
@@ -33,7 +32,7 @@ function App() {
             path="/profile"
             element={
               <ProtectedRoute>
-                <Profile />{' '}
+                <Profile />
               </ProtectedRoute>
             }
           />

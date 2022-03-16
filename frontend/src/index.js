@@ -7,9 +7,11 @@ import App from './App';
 import { AuthProvider } from './hooks/useAuth';
 import reportWebVitals from './reportWebVitals';
 import client from './utils/apolloClientLoader';
+import CssBaseline from '@mui/material/CssBaseline';
 
 ReactDOM.render(
   <BrowserRouter>
+    <CssBaseline />
     <ApolloProvider client={client}>
       <AuthProvider>
         <App />

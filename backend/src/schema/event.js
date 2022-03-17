@@ -6,14 +6,7 @@ export default gql`
     }
 
     extend type Mutation {
-        createEvent(
-            title: String!
-            description: String
-            location: String!
-            startDate: String!
-            endDate: String!
-            timeslotLength: Int
-        ): Event
+        createEvent(input: CreateEventInput): Event
     }
 
     type Event {
@@ -25,8 +18,16 @@ export default gql`
         startDate: String!
         endDate: String!
         timeslotLength: Int!
-        timeslots: [Int]
+        timeslots: [Timeslot]
         invitees: [User]
         limited: Boolean
+    }
+    input CreateEventInput {
+        title: String!
+        description: String
+        location: String!
+        startDate: String!
+        endDate: String!
+        timeslotLength: Int
     }
 `;

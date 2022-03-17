@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 export default gql`
     extend type Mutation {
-        createSlot(eventId: String!, datetime: String!, note: String): Timeslot
+        createSlot(input: createSlotInput): Timeslot
     }
 
     type Timeslot {
@@ -10,5 +10,11 @@ export default gql`
         datetime: String!
         bookerId: User
         note: String!
+    }
+
+    input createSlotInput {
+        eventId: String!
+        datetime: String!
+        note: String
     }
 `;

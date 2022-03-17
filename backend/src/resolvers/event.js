@@ -1,10 +1,8 @@
 import { eventCreationRules } from "../validators/eventValidator";
 
-const createEvent = async (
-    parent,
-    { title, description, location, startDate, endDate, timeslotLength },
-    { models, user }
-) => {
+const createEvent = async (parent, { input }, { models, user }) => {
+    const { title, description, location, startDate, endDate, timeslotLength } =
+        input;
     try {
         await eventCreationRules.validate(
             {

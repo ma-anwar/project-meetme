@@ -1,6 +1,7 @@
 import { slotCreationRules } from "../validators/timeslotValidators";
 
-const createSlot = async (parent, { eventId, datetime, note }, { models }) => {
+const createSlot = async (parent, { input }, { models }) => {
+    const { eventId, datetime, note } = input;
     try {
         await slotCreationRules.validate(
             {

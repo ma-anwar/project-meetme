@@ -5,16 +5,11 @@ const userResolvers = {
             models.User.findOne({ email }),
     },
 
-    Mutation: {
-        // TODO: remove, left for testing right now
-        signUp: async (parent, { username, email, password }, { models }) => {
-            const user = await models.User.create({
-                username,
-                email,
-                password,
-            });
-
-            return user;
+    User: {
+        eventsOwned: async (parent) => {
+            const owner = parent;
+            await owner.populate("eventsOwned");
+            return owner.eventsOwned;
         },
     },
 };

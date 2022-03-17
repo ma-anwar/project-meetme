@@ -4,6 +4,12 @@ const GET_ME = gql`
     me {
       username
       email
+      eventsOwned {
+        title
+        description
+        startDate
+        endDate
+      }
     }
   }
 `;

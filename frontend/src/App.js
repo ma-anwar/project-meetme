@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import { LoginForm } from './components/account/Login';
 import { SignupForm } from './components/account/Signup';
 import NavBar from './components/NavBar/NavBar';
-import { Profile } from './components/Profile';
+import { Profile } from './components/Profile/Profile';
 import { CreateEvent } from './components/CreateEvent';
 import { EventCalendar } from './components/EventCalendar';
 import { BookAppointment } from './components/BookAppointment';

@@ -28,8 +28,9 @@ export const AuthProvider = ({ children }) => {
     if (data) {
       setAuthReady(true);
       setLoggedIn(true);
-      const { username, email } = data.me;
-      setUserProfile({ username, email });
+      console.log(data.me);
+      const { username, email, eventsOwned } = data.me;
+      setUserProfile({ username, email, eventsOwned });
     } else if (error) {
       setAuthReady(true);
     }

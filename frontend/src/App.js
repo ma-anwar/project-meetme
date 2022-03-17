@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { LoginForm } from './components/account/Login';
-import { SignupForm } from './components/account/Signup';
+import LoginForm from './components/account/Login';
+import SignupForm from './components/account/Signup';
 import NavBar from './components/NavBar/NavBar';
-import { Profile } from './components/Profile/Profile';
-import { CreateEvent } from './components/CreateEvent';
+import Profile from './components/Profile/Profile';
+import CreateEvent from './components/CreateEvent/CreateEvent';
 import { EventCalendar } from './components/EventCalendar';
 import { BookAppointment } from './components/BookAppointment';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
@@ -45,7 +45,7 @@ function App() {
             }
           />
           <Route
-            path="/event_cal"
+            path="/cal/:id"
             element={
               <ProtectedRoute>
                 <EventCalendar />

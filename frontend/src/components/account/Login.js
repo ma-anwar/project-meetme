@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, TextField, Button } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 
-export function LoginForm() {
+export default function LoginForm() {
   //TODO: Add error handling, hide password
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();

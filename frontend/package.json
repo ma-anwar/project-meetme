@@ -17,6 +17,7 @@
     "axios": "^0.26.1",
     "date-fns": "^2.28.0",
     "graphql": "^15.8.0",
+    "lodash": "^4.17.21",
     "mui-sx": "^1.0.0",
     "react": "^17.0.2",
     "react-big-calendar": "^0.39.3",

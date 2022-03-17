@@ -1,21 +1,14 @@
-import {
-  Typography,
-  Button,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Box,
-} from '@mui/material';
+import { Typography, Button, List, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import EventItem from '../EventItem/EventItem';
 import { useAuth } from '../../hooks/useAuth';
-//TODO: Create an event component, that represents the info from one event
-//TODO: Create an event list component that will take an array of events and display them, will need pagination implemented in the future
+import { useNavigate } from 'react-router-dom';
 
-export function Profile() {
+//TODO: Create list component that supports pagination
+//TODO: refetch profile on visit to page?
+export default function Profile() {
   const { userProfile } = useAuth();
+  const navigate = useNavigate();
   return (
     <Box
       display="flex"
@@ -31,28 +24,20 @@ export function Profile() {
         Here's what you've got coming up
       </Typography>
       <List>
-        <ListItem>
-          <ListItemButton>
-            <ListItemIcon>
-              <CalendarMonthIcon />
-            </ListItemIcon>
-            <ListItemText primary="Halal trip to Vancouver" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem>
-          <ListItemButton>
-            <ListItemIcon>
-              <CalendarMonthIcon />
-            </ListItemIcon>
-            <ListItemText primary="Bday week" />
-          </ListItemButton>
-        </ListItem>
+        {userProfile.eventsOwned.map((evt) => (
+          <EventItem
+            key={evt._id}
+            id={evt._id}
+            title={evt.title}
+            startDate={evt.startDate}
+            endDate={evt.endDate}
+          />
+        ))}
       </List>
-      <Button variant="contained" href="/create_event">
+      <Button variant="contained" onClick={() => navigate('/create_event')}>
         <AddIcon />
         Create Event
       </Button>
     </Box>
   );
 }
-

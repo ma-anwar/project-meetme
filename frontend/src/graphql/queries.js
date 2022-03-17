@@ -9,6 +9,7 @@ const GET_ME = gql`
         description
         startDate
         endDate
+        _id
       }
     }
   }

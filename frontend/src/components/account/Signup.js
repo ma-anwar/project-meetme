@@ -2,7 +2,7 @@ import React from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth.js';
 
-export function SignupForm() {
+export default function SignupForm() {
   //TODO: Add validation and use error props of mui components, hide passwords, maybe use a controlled component instead
   //reference: https://reactjs.org/docs/uncontrolled-components.html
   // Ideal method to implement form: https://reactjs.org/docs/forms.html#controlled-components but not super high priority

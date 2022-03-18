@@ -6,25 +6,6 @@ import { GET_EVENT } from '../../graphql/queries';
 import { useQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 
-const appointments = [
-  {
-    title: 'Big Meeting',
-    allDay: true,
-    start: new Date(2022, 2, 17),
-    end: new Date(2022, 2, 17),
-  },
-  {
-    title: 'Vacation',
-    start: new Date(2021, 6, 7),
-    end: new Date(2021, 6, 10),
-  },
-  {
-    title: 'Conference',
-    start: new Date(2021, 6, 20),
-    end: new Date(2021, 6, 23),
-  },
-];
-
 export default function EventCalendar() {
   //Aliasing as eventId, maybe we should just rename the param to eventId in App
   const { id: eventId } = useParams();
@@ -33,18 +14,25 @@ export default function EventCalendar() {
   });
 
   const [allAvailableAppts, setAvailableAppts] = useState([]);
-  // TODO ^ change above to retrieve all available appts for this event
 
   useEffect(() => {
-    // maybe we should unpack data? Not sure what the best pattern is for client side queries using apollo
-    setAvailableAppts(data?.event?.timeslots || []);
+    //Really messy code sorry, need to extract into function
+    if (data) {
+      console.log(data);
+      console.log('got here');
+      const formattedDates = data?.event?.timeslots.map((slot) => ({
+        start: new Date(slot.start * 1000),
+        end: new Date(slot.end * 1000),
+        title: slot.title,
+      }));
+      setAvailableAppts(formattedDates || []);
+    }
 
-    console.log(data);
     console.log(error);
   }, [error, data]);
 
   const eventUrl = 'Share link';
-  //TODO: Maybe build out a button component that copys the current url to clipboard for sharing
+  //TODO: build out a button component that copys the current url to clipboard for sharing?
   //TODO: Conditonally render OwnerCalendar based on Owner status
 
   return (
@@ -54,7 +42,11 @@ export default function EventCalendar() {
         <Typography>{eventUrl}</Typography>
       </Box>
 
-      <OwnerCalendar slots={allAvailableAppts} setSlots={setAvailableAppts} />
+      <OwnerCalendar
+        slots={allAvailableAppts}
+        setSlots={setAvailableAppts}
+        eventId={eventId}
+      />
     </React.Fragment>
   );
 }

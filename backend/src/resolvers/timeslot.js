@@ -1,5 +1,6 @@
 import { slotCreationRules } from "../validators/timeslotValidators";
 
+// Broken query due to schema change
 const createSlot = async (parent, { input }, { models }) => {
     const { eventId, datetime, note } = input;
     try {
@@ -33,9 +34,29 @@ const createSlot = async (parent, { input }, { models }) => {
     return timeslot;
 };
 
+const createSlots = async (parent, { input }, { models, user }) => {
+    const { eventId, slots } = input;
+    const event = await models.Event.findOne({ _id: eventId });
+    if (!user._id.equals(event.ownerId)) {
+        throw new Error("Unauthorized to create slots on non-owned calendar");
+    }
+    const createdSlots = await models.Timeslot.create(...slots);
+    console.log("Starting");
+    console.log(createdSlots);
+    await models.Event.updateOne(
+        { _id: eventId },
+        { $push: { timeslots: createdSlots } }
+    );
+    const updatedEvent = await models.Event.findOne({ _id: eventId });
+    await updatedEvent.populate("timeslots");
+    console.log(updatedEvent);
+    return updatedEvent.timeslots;
+};
+
 const timeslotResolvers = {
     Mutation: {
         createSlot,
+        createSlots,
     },
 };
 

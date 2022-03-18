@@ -24,4 +24,17 @@ const CREATE_EVENT = gql`
   }
 `;
 
-export { CREATE_EVENT };
+const CREATE_SLOTS = gql`
+  mutation createSlots($input: createSlotsInput!) {
+    createSlots(input: $input) {
+      _id
+      start
+      end
+      title
+      bookerId {
+        _id
+      }
+    }
+  }
+`;
+export { CREATE_EVENT, CREATE_SLOTS };

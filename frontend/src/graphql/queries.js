@@ -29,6 +29,7 @@ const GET_EVENT = gql`
         _id
       }
       timeslots {
+        _id
         start
         end
         title

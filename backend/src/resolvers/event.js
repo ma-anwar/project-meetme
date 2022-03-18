@@ -44,7 +44,7 @@ const createEvent = async (parent, { input }, { models, user }) => {
 const eventResolvers = {
     Query: {
         event: async (parent, { id }, { models }) =>
-            models.Event.findOne({ id }).populate("ownerId"),
+            models.Event.findOne({ _id: id }).populate("ownerId"),
     },
 
     Mutation: {

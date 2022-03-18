@@ -15,7 +15,12 @@ const signup = asyncWrap(async (req, res) => {
     if (userAlreadyExists)
         return res.status(httpStatus.BAD_REQUEST).send("User already exists");
 
-    const newUser = await User.create({ username, email, password });
+    const hashedPass = await User.hashPass(password);
+    const newUser = await User.create({
+        username,
+        email,
+        password: hashedPass,
+    });
 
     req.session.user = getSessionVars(newUser);
 

@@ -7,14 +7,16 @@ export default gql`
 
     type Timeslot {
         _id: ID!
-        datetime: String!
+        start: String!
+        end: String!
         bookerId: User
-        note: String!
+        title: String!
     }
 
     input createSlotInput {
         eventId: String!
-        datetime: String!
-        note: String
+        start: String!
+        end: String!
+        title: String
     }
 `;

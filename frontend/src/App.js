@@ -5,7 +5,7 @@ import SignupForm from './components/account/Signup';
 import NavBar from './components/NavBar/NavBar';
 import Profile from './components/Profile/Profile';
 import CreateEvent from './components/CreateEvent/CreateEvent';
-import { EventCalendar } from './components/EventCalendar';
+import EventCalendar from './components/EventCalendar/EventCalendar';
 import { BookAppointment } from './components/BookAppointment';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';

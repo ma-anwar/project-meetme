@@ -27,12 +27,10 @@ const userSchema = Schema({
     notifications: [notificationSchema],
 });
 
-const hashPass = async function (next) {
-    this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
-    next();
+userSchema.statics.hashPass = async function (plainPass) {
+    const hashedPass = await bcrypt.hash(plainPass, SALT_ROUNDS);
+    return hashedPass;
 };
-
-userSchema.pre("save", hashPass);
 
 userSchema.statics.isInUse = async function (email) {
     return this.countDocuments({ email }).limit(1);

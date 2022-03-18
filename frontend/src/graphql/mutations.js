@@ -40,7 +40,7 @@ const CREATE_SLOTS = gql`
 
 const BOOK_SLOT = gql`
   mutation bookSlot($input: bookSlotInput!) {
-    createSlots(input: $input) {
+    bookSlot(input: $input) {
       _id
     }
   }

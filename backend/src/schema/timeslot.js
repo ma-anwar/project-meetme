@@ -20,10 +20,6 @@ export default gql`
         end: String!
         title: String
     }
-    input bookSlotInput {
-        slotId: ID!
-        eventId: ID!
-    }
     input createSlotsInput {
         eventId: ID!
         slots: [createSlotInput]

@@ -18,10 +18,10 @@ export default function OwnerCalendar({
   eventId,
   timeslotLength,
 }) {
-  const [createSlots, { data, loading, error }] = useMutation(CREATE_SLOTS, {
+  const [createSlots] = useMutation(CREATE_SLOTS, {
     refetchQueries: [GET_EVENT],
   });
-  const [deleteSlot, { dataD, loadingD, errorD }] = useMutation(DELETE_SLOT, {
+  const [deleteSlot] = useMutation(DELETE_SLOT, {
     refetchQueries: [GET_EVENT],
   });
   const [seeSlot, setSeeSlot] = useState(false);

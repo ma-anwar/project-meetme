@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Typography, Button, Grid, TextField } from '@mui/material';
+import { Typography, TextField } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -16,7 +16,7 @@ export default function Step2({ formStep, newEvent, handleChange }) {
         Just a few more questions!
       </Typography>
       <Typography variant="p" m={2}>
-        How long do you want your meetings to be?
+        How long do you want your meetings/appointments to be?
       </Typography>
       <TextField
         id="standard-number"
@@ -34,7 +34,7 @@ export default function Step2({ formStep, newEvent, handleChange }) {
       />
       <FormControl>
         <Typography variant="p" m={4}>
-          And where will your event take place??
+          And where will your event take place?
         </Typography>
         <Select
           value={newEvent.location}

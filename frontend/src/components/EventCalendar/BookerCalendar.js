@@ -13,10 +13,10 @@ import { GET_EVENT } from '../../graphql/queries';
 import { useMutation } from '@apollo/client';
 
 export default function BookerCalendar({ slots, setSlots, eventId }) {
-  const [bookSlot, { data, loading, error }] = useMutation(BOOK_SLOT, {
+  const [bookSlot] = useMutation(BOOK_SLOT, {
     refetchQueries: [GET_EVENT],
   });
-  const [unbookSlot, { dataU, loadingU, errorU }] = useMutation(UNBOOK_SLOT, {
+  const [unbookSlot] = useMutation(UNBOOK_SLOT, {
     refetchQueries: [GET_EVENT],
   });
 

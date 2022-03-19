@@ -11,12 +11,12 @@ import { useAuth } from '../../hooks/useAuth';
 export default function EventCalendar() {
   //Aliasing as eventId, maybe we should just rename the param to eventId in App
   const { id: eventId } = useParams();
-  const { loading, error, data } = useQuery(GET_EVENT, {
+  const { data, error } = useQuery(GET_EVENT, {
     variables: { id: eventId },
   });
 
   const { userProfile } = useAuth();
-  let isOwner = data?.event?.ownerId._id === userProfile._id;
+  let isOwner = data?.event?.ownerId?._id === userProfile._id;
 
   const [allAvailableAppts, setAvailableAppts] = useState([]);
 
@@ -50,7 +50,7 @@ export default function EventCalendar() {
     }
 
     console.log(error);
-  }, [error, data]);
+  }, [error, data, isOwner, userProfile._id]);
 
   const eventUrl = `localhost:3000/cal/${eventId}`;
 

@@ -7,7 +7,7 @@ export default function Step0({ formStep, newEvent, handleChange }) {
 
   return (
     <React.Fragment>
-      <Typography variant="p">Well what should we call your event?</Typography>
+      <Typography variant="p">What should we call your event?</Typography>
       <TextField
         id="name-input"
         name="title"
@@ -18,7 +18,7 @@ export default function Step0({ formStep, newEvent, handleChange }) {
         onChange={handleChange}
       />
       <Typography variant="p" m={3}>
-        Aaand can you give us some extra deets?
+        Can you give us some extra details?
       </Typography>
       <TextField
         name="description"

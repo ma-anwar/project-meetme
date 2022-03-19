@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { loading, error, data, refetch } = useQuery(GET_ME, {
+  const { error, data, refetch } = useQuery(GET_ME, {
     fetchPolicy: 'network-only',
   });
 

@@ -21,7 +21,7 @@ export default function CreateEvent() {
   });
   const [formStep, setFormStep] = useState(0);
   const navigate = useNavigate();
-  const [createEvent, { data, loading, error }] = useMutation(CREATE_EVENT, {
+  const [createEvent, { data, error }] = useMutation(CREATE_EVENT, {
     refetchQueries: [GET_ME],
     onCompleted: ({ createEvent }) => {
       navigate(`/cal/${createEvent._id}`);

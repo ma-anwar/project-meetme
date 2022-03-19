@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import LoginForm from './components/account/Login';
-import SignupForm from './components/account/Signup';
+import LoginForm from './components/Account/Login';
+import SignupForm from './components/Account/Signup';
 import NavBar from './components/NavBar/NavBar';
 import Profile from './components/Profile/Profile';
 import CreateEvent from './components/CreateEvent/CreateEvent';
 import EventCalendar from './components/EventCalendar/EventCalendar';
-import { BookAppointment } from './components/BookAppointment';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import { Box, CircularProgress } from '@mui/material';
@@ -49,14 +48,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <EventCalendar />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/book_appt"
-            element={
-              <ProtectedRoute>
-                <BookAppointment />
               </ProtectedRoute>
             }
           />

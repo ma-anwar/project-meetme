@@ -10,7 +10,6 @@ import { useMutation } from '@apollo/client';
 import { pick } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 
-//TODO: Implement better validation, error states, disable continue until error resolution
 export default function CreateEvent() {
   const [newEvent, setNewEvent] = useState({
     title: '',

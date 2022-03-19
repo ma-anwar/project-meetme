@@ -1,6 +1,5 @@
 const whitelist = ["http://localhost:3000", "https://studio.apollographql.com"];
-// Configured as per docs: Configuring CORS w/ Dynamic Origin
-// https://www.npmjs.com/package/cors#configuring-cors-w-dynamic-origin
+
 export const corsOptionsDelegate = function (req, callback) {
     let corsOptions;
     if (whitelist.indexOf(req.header("Origin")) !== -1) {

@@ -7,7 +7,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 export default function EventItem({ id, title, startDate, endDate }) {
-  //TODO: Build out better date parsing
   // Implement delete event functionality
   const navigate = useNavigate();
   const secondary = `${new Date(startDate * 1000)} to ${new Date(

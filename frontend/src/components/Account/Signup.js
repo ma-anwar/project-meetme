@@ -3,10 +3,6 @@ import { TextField, Button, Box } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth.js';
 
 export default function SignupForm() {
-  //TODO: Add validation and use error props of mui components, hide passwords, maybe use a controlled component instead
-  //reference: https://reactjs.org/docs/uncontrolled-components.html
-  // Ideal method to implement form: https://reactjs.org/docs/forms.html#controlled-components but not super high priority
-  //TODO: Add introductory blurb here
   const { signup } = useAuth();
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,6 +32,7 @@ export default function SignupForm() {
             sx={{ m: 1 }}
             placeholder="Password"
             name="password"
+            type="password"
             required
           />
           <TextField

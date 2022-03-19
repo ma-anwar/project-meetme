@@ -4,8 +4,6 @@ import EventItem from '../EventItem/EventItem';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
-//TODO: Create list component that supports pagination
-//TODO: refetch profile on visit to page?
 export default function Profile() {
   const { userProfile } = useAuth();
   const navigate = useNavigate();

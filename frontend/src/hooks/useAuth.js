@@ -4,7 +4,6 @@ import { GET_ME } from '../graphql/queries';
 import { useQuery } from '@apollo/client';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-// adapted from https://www.jeffedmondson.dev/blog/react-protected-routes/
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {

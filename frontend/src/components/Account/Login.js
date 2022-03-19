@@ -3,7 +3,6 @@ import { Box, TextField, Button } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 
 export default function LoginForm() {
-  //TODO: Add error handling, hide password
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
@@ -27,6 +26,7 @@ export default function LoginForm() {
         <TextField
           placeholder="Enter your password"
           name="password"
+          type="password"
           required
           sx={{ m: 1 }}
           onChange={(e) => {

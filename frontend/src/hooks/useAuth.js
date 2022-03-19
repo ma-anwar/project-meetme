@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }) => {
       setUserProfile(data.me);
       setAuthReady(true);
       setLoggedIn(true);
-      console.log(data.me);
     } else if (error) {
       setAuthReady(true);
     }

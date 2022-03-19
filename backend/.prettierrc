@@ -3,6 +3,6 @@
   "tabWidth": 4,
   "semi": true,
   "bracketSpacing": true,
-  "endOfLine": "auto",
+  "endOfLine": "lf",
   "printWidth": 80
 }

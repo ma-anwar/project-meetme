@@ -52,12 +52,17 @@ const createSlots = async (parent, { input }, { models, user }) => {
 
 const bookSlot = async (parent, { input }, { models, user }) => {
     // TODO: Check to make sure not booking time with self
-    const { eventId, slotId } = input;
+    const { eventId, slotId, title = "" } = input;
     let updatedSlot;
     try {
         updatedSlot = await models.Event.findOneAndUpdate(
             { " _id": eventId, "timeslots._id": slotId },
-            { $set: { "timeslots.$.bookerId": user } }
+            {
+                $set: {
+                    "timeslots.$.bookerId": user,
+                    "timeslots.$.title": title,
+                },
+            }
         );
     } catch (err) {
         console.log(err);
@@ -67,11 +72,57 @@ const bookSlot = async (parent, { input }, { models, user }) => {
     return updatedSlot;
 };
 
+const unbookSlot = async (parent, { input }, { models }) => {
+    // TODO: Check to make sure user is owner or previously booked
+    const { eventId, slotId, title = "" } = input;
+    let updatedSlot;
+    try {
+        updatedSlot = await models.Event.findOneAndUpdate(
+            { " _id": eventId, "timeslots._id": slotId },
+            {
+                $set: {
+                    "timeslots.$.bookerId": null,
+                    "timeslots.$.title": title,
+                },
+            }
+        );
+    } catch (err) {
+        console.log(err);
+        throw new Error("Unable to unbook slot");
+    }
+
+    return updatedSlot;
+};
+
+const deleteSlot = async (parent, { input }, { models }) => {
+    // TODO: Ensure deleter is owner
+    const { eventId, slotId } = input;
+    let deletedSlot;
+    try {
+        deletedSlot = await models.Event.findOneAndUpdate(
+            {
+                _id: eventId,
+            },
+            {
+                $pull: {
+                    timeslots: { _id: slotId },
+                },
+            }
+        );
+    } catch (err) {
+        console.log(err);
+        throw new Error("Deletion failed");
+    }
+    return deletedSlot;
+};
+
 const timeslotResolvers = {
     Mutation: {
         createSlot,
         createSlots,
         bookSlot,
+        unbookSlot,
+        deleteSlot,
     },
 };
 

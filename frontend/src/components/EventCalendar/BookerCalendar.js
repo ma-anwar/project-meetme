@@ -122,7 +122,7 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
               Book
             </Button>
             <Button
-              csx={sx(base)}
+              sx={sx(base)}
               type="button"
               variant="outlined"
               onClick={handleCancel}

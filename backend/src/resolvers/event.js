@@ -41,6 +41,18 @@ const createEvent = async (parent, { input }, { models, user }) => {
     return event;
 };
 
+const deleteEvent = async (parent, { input }, { models }) => {
+    const { eventId } = input;
+    let deleted;
+    try {
+        deleted = await models.Event.deleteOne({ _id: eventId });
+    } catch (err) {
+        console.log(err);
+        throw new Error("Deleting event failed");
+    }
+    return true;
+};
+
 const eventResolvers = {
     Query: {
         event: async (parent, { id }, { models }) =>
@@ -49,6 +61,7 @@ const eventResolvers = {
 
     Mutation: {
         createEvent,
+        deleteEvent,
     },
 };
 export default eventResolvers;

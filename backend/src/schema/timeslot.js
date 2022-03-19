@@ -5,6 +5,8 @@ export default gql`
         createSlot(input: createSlotInput): Timeslot
         createSlots(input: createSlotsInput!): [Timeslot]
         bookSlot(input: bookSlotInput!): Timeslot!
+        unbookSlot(input: bookSlotInput!): Timeslot!
+        deleteSlot(input: deleteSlotInput!): Timeslot!
     }
 
     type Timeslot {
@@ -25,6 +27,11 @@ export default gql`
         slots: [createSlotInput]
     }
     input bookSlotInput {
+        eventId: ID!
+        slotId: ID!
+        title: String
+    }
+    input deleteSlotInput {
         eventId: ID!
         slotId: ID!
     }

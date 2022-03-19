@@ -7,6 +7,7 @@ export default gql`
 
     extend type Mutation {
         createEvent(input: CreateEventInput): Event
+        deleteEvent(input: deleteEventInput): Boolean
     }
 
     type Event {
@@ -29,5 +30,8 @@ export default gql`
         startDate: String!
         endDate: String!
         timeslotLength: Int
+    }
+    input deleteEventInput {
+        eventId: ID!
     }
 `;

@@ -9,7 +9,7 @@ services:
       - db:/data/db
 
   redis:
-    image: redis:latest
+    image: redis:alpine
     restart: always
     expose:
       - 6379

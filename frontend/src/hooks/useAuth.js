@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { loading, error, data } = useQuery(GET_ME, {
+  const { loading, error, data, refetch } = useQuery(GET_ME, {
     fetchPolicy: 'network-only',
   });
 
@@ -28,10 +28,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (data) {
+      setUserProfile(data.me);
       setAuthReady(true);
       setLoggedIn(true);
       console.log(data.me);
-      setUserProfile(data.me);
     } else if (error) {
       setAuthReady(true);
     }
@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
+      await refetch();
       setLoggedIn(true);
       redirect();
     } catch (err) {
@@ -55,6 +56,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const resp = await axios.post('/api/auth/login', { email, password });
+      await refetch();
       setLoggedIn(true);
       redirect();
     } catch (err) {

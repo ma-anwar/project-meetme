@@ -1,7 +1,7 @@
 # Setup Instructions
 
-If using docker then `docker-compose up --build` for the first time, by default server will run on `localhost:5000`.
-
+If using docker then `docker-compose up --build -d` for the first time, by default server will run on `localhost:5000`.
+To view the backend logs, `docker-compose logs --tail=all -f backend`
 Else,
 
 1. Install [mongodb](https://docs.mongodb.com/manual/installation/) and make sure it's running

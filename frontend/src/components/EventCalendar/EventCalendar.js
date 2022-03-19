@@ -24,7 +24,6 @@ export default function EventCalendar() {
     //Really messy code sorry, need to extract into function
     if (data) {
       console.log(data);
-      console.log('got here');
       const formattedDates = data?.event?.timeslots.map((slot) => ({
         start: new Date(slot.start * 1000),
         end: new Date(slot.end * 1000),

@@ -45,4 +45,34 @@ const BOOK_SLOT = gql`
     }
   }
 `;
-export { CREATE_EVENT, CREATE_SLOTS, BOOK_SLOT };
+
+const DELETE_SLOT = gql`
+  mutation deleteSlot($input: deleteSlotInput!) {
+    deleteSlot(input: $input) {
+      _id
+    }
+  }
+`;
+
+const UNBOOK_SLOT = gql`
+  mutation unbookSlot($input: bookSlotInput!) {
+    unbookSlot(input: $input) {
+      _id
+    }
+  }
+`;
+
+const DELETE_EVENT = gql`
+  mutation deleteEvent($input: deleteEventInput) {
+    deleteEvent(input: $input)
+  }
+`;
+
+export {
+  CREATE_EVENT,
+  CREATE_SLOTS,
+  BOOK_SLOT,
+  DELETE_SLOT,
+  DELETE_EVENT,
+  UNBOOK_SLOT,
+};

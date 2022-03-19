@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import LoginForm from './components/Account/Login';
 import SignupForm from './components/Account/Signup';
 import NavBar from './components/NavBar/NavBar';
@@ -9,6 +9,7 @@ import EventCalendar from './components/EventCalendar/EventCalendar';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import { Box, CircularProgress } from '@mui/material';
+import { Reddit } from '@mui/icons-material';
 
 function App() {
   const { authReady } = useAuth();
@@ -27,6 +28,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
+          <Route path="/" exact element={<Navigate replace to="/signup" />} />
           <Route
             path="/profile"
             element={

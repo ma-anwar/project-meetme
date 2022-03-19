@@ -1,4 +1,4 @@
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Link } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import OwnerCalendar from './OwnerCalendar';
@@ -29,7 +29,7 @@ export default function EventCalendar() {
         end: new Date(slot.end * 1000),
         title: slot.title,
         _id: slot._id,
-        bookerId: slot.bookerId, //temp, to remove, just needed for now to check slot actually booked
+        bookerId: slot.bookerId,
       }));
 
       //Changes visible slots based on ownership
@@ -52,15 +52,16 @@ export default function EventCalendar() {
     console.log(error);
   }, [error, data]);
 
-  const eventUrl = 'Share link';
-  //TODO: build out a button component that copys the current url to clipboard for sharing?
+  const eventUrl = `localhost:3000/cal/${eventId}`;
 
   return (
     <React.Fragment>
       <Box display="flex" flexDirection="column" alignItems="center" m={1}>
         <Typography variant="h4">{data?.event.title}</Typography>
         {isOwner ? (
-          <Typography>{eventUrl}</Typography>
+          <Typography>
+            Share Link: <Link href={eventUrl}>{eventUrl}</Link>
+          </Typography>
         ) : (
           <Typography>{data?.event.description}</Typography>
         )}
@@ -70,6 +71,7 @@ export default function EventCalendar() {
           slots={allAvailableAppts}
           setSlots={setAvailableAppts}
           eventId={eventId}
+          timeslotLength={data?.event?.timeslotLength}
         />
       ) : (
         <BookerCalendar

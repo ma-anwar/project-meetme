@@ -20,7 +20,7 @@ export default function Step2({ formStep, newEvent, handleChange }) {
       </Typography>
       <TextField
         id="standard-number"
-        label="Number"
+        label="Minutes"
         name="timeslotLength"
         type="number"
         value={newEvent.slotLength}

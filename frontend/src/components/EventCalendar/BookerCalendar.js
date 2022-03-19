@@ -1,4 +1,4 @@
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
@@ -8,7 +8,7 @@ import sx from 'mui-sx';
 import { Box, TextField, Button } from '@mui/material';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { BOOK_SLOT } from '../../graphql/mutations';
+import { BOOK_SLOT, UNBOOK_SLOT } from '../../graphql/mutations';
 import { GET_EVENT } from '../../graphql/queries';
 import { useMutation } from '@apollo/client';
 
@@ -16,8 +16,12 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
   const [bookSlot, { data, loading, error }] = useMutation(BOOK_SLOT, {
     refetchQueries: [GET_EVENT],
   });
+  const [unbookSlot, { dataU, loadingU, errorU }] = useMutation(UNBOOK_SLOT, {
+    refetchQueries: [GET_EVENT],
+  });
 
   const [book, setBook] = useState(false);
+  const [unBook, setUnBook] = useState(false);
   const [cmnt, setCmnt] = useState('');
   const [when, setWhen] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
@@ -26,10 +30,10 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //TODO rename slot title once booked (like "Booked-ID")
     const bookedSlot = {
       eventId: eventId,
       slotId: selectedSlot,
+      title: 'Booked-' + userProfile.username,
       //comment: e.target.appt_cmnts,
     };
 
@@ -47,13 +51,16 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
     const endWhen = format(end, 'E MMM dd yyyy, HH:mm');
     setSelectedSlot(_id);
     setWhen(startWhen + ' - ' + endWhen);
-    setBook(true);
-    //temp, to remove, just needed for now to check
-    console.log('BOOKED BY');
-    console.log(bookerId);
+    if (bookerId && bookerId._id === userProfile._id) {
+      setUnBook(true);
+      setBook(false);
+    } else {
+      setBook(true);
+      setUnBook(false);
+    }
   };
 
-  const handleCancel = (e) => {
+  const handleCancelPreBook = (e) => {
     setSelectedSlot(null);
     setCmnt('');
     setBook(false);
@@ -61,6 +68,28 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
 
   const onCmntChange = (e) => {
     setCmnt(e.target.value);
+  };
+
+  const handleCancelBooking = (e) => {
+    e.preventDefault();
+    const bookedSlot = {
+      eventId: eventId,
+      slotId: selectedSlot,
+      title: 'Empty slot',
+      //comment: "",
+    };
+
+    unbookSlot({
+      variables: { input: bookedSlot },
+    });
+
+    setCmnt('');
+    setUnBook(false);
+  };
+
+  const handleClose = (e) => {
+    setSelectedSlot(null);
+    setUnBook(false);
   };
 
   const locales = {
@@ -86,6 +115,7 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
         events={slots}
         startAccessor="start"
         endAccessor="end"
+        defaultView={Views.WEEK}
         style={{ height: 500 }}
         selectable
         onSelectEvent={bookAppt}
@@ -125,12 +155,60 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
               sx={sx(base)}
               type="button"
               variant="outlined"
-              onClick={handleCancel}
+              onClick={handleCancelPreBook}
             >
               Cancel
             </Button>
           </Box>
         </form>
+      ) : null}
+      {unBook ? (
+        <Box display="flex" flexDirection="column">
+          <TextField
+            sx={sx(base)}
+            inputProps={{ style: { fontWeight: 'bold' } }}
+            label="Who"
+            name="appt_booker"
+            value={userProfile.username}
+            disabled
+          />
+          <TextField
+            sx={sx(base)}
+            inputProps={{ style: { fontWeight: 'bold' } }}
+            label="When"
+            name="appt_time"
+            value={when}
+            disabled
+          />
+          <TextField
+            sx={sx(base)}
+            inputProps={{ style: { fontWeight: 'bold' } }}
+            placeholder="Comments"
+            name="appt_cmnts"
+            value={cmnt}
+            multiline
+            rows={5}
+            disabled
+          />
+          <Box display="flex" flexDirection="row" justifyContent="center">
+            <Button
+              sx={sx(base)}
+              type="button"
+              variant="contained"
+              onClick={handleCancelBooking}
+            >
+              Cancel Booking
+            </Button>
+            <Button
+              sx={sx(base)}
+              type="button"
+              variant="outlined"
+              onClick={handleClose}
+            >
+              Close
+            </Button>
+          </Box>
+        </Box>
       ) : null}
     </Box>
   );

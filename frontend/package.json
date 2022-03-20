@@ -1,0 +1,57 @@
+{
+  "name": "meet-me",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:5000/",
+  "dependencies": {
+    "@apollo/client": "^3.5.10",
+    "@date-io/date-fns": "^2.13.1",
+    "@emotion/react": "^11.8.1",
+    "@emotion/styled": "^11.8.1",
+    "@mui/icons-material": "^5.5.0",
+    "@mui/lab": "^5.0.0-alpha.72",
+    "@mui/material": "^5.5.0",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.3",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^0.26.1",
+    "date-fns": "^2.28.0",
+    "graphql": "^15.8.0",
+    "lodash": "^4.17.21",
+    "mui-sx": "^1.0.0",
+    "react": "^17.0.2",
+    "react-big-calendar": "^0.39.3",
+    "react-dom": "^17.0.2",
+    "react-duration-picker": "^1.1.1",
+    "react-router-dom": "^6.2.2",
+    "react-scripts": "5.0.0",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "prettier": "2.5.1"
+  }
+}

@@ -1,5 +1,5 @@
+/* eslint no-console: ["error", { allow: ["warn"] }] */
 import http from "http";
-
 import app from "./app";
 import server from "./server";
 import { connectDb } from "./models";

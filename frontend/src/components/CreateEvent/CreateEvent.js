@@ -27,12 +27,6 @@ export default function CreateEvent() {
     },
   });
 
-  // Leaving these in for debug as we're building
-  useEffect(() => {
-    console.log(data);
-    console.log(error);
-  }, [data, error]);
-
   const isValid = () => {
     return (
       newEvent.title.length &&

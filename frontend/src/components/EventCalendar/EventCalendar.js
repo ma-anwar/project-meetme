@@ -9,7 +9,6 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 export default function EventCalendar() {
-  //Aliasing as eventId, maybe we should just rename the param to eventId in App
   const { id: eventId } = useParams();
   const { data, error } = useQuery(GET_EVENT, {
     variables: { id: eventId },
@@ -21,9 +20,7 @@ export default function EventCalendar() {
   const [allAvailableAppts, setAvailableAppts] = useState([]);
 
   useEffect(() => {
-    //Really messy code sorry, need to extract into function
     if (data) {
-      console.log(data);
       const formattedDates = data?.event?.timeslots.map((slot) => ({
         start: new Date(slot.start * 1000),
         end: new Date(slot.end * 1000),
@@ -32,7 +29,6 @@ export default function EventCalendar() {
         bookerId: slot.bookerId,
       }));
 
-      //Changes visible slots based on ownership
       if (isOwner) {
         setAvailableAppts(formattedDates || []);
       } else {
@@ -48,8 +44,6 @@ export default function EventCalendar() {
         setAvailableAppts(newFormattedDates || []);
       }
     }
-
-    console.log(error);
   }, [error, data, isOwner, userProfile._id]);
 
   const eventUrl = `localhost:3000/cal/${eventId}`;

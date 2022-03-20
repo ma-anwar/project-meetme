@@ -1,6 +1,5 @@
 import { slotCreationRules } from "../validators/timeslotValidators";
 
-// Broken query due to schema change
 const createSlot = async (parent, { input }, { models }) => {
     const { eventId, datetime, note } = input;
     try {
@@ -16,7 +15,6 @@ const createSlot = async (parent, { input }, { models }) => {
         return err;
     }
 
-    // TODO: Ensure no overlap with other intervals
     const event = await models.Event.findOne({ _id: eventId });
     const fitsInEvent = await event.fitsInEvent(new Date(datetime));
     if (!fitsInEvent) {
@@ -51,7 +49,6 @@ const createSlots = async (parent, { input }, { models, user }) => {
 };
 
 const bookSlot = async (parent, { input }, { models, user }) => {
-    // TODO: Check to make sure not booking time with self
     const { eventId, slotId, title = "" } = input;
     let updatedSlot;
     try {
@@ -73,7 +70,6 @@ const bookSlot = async (parent, { input }, { models, user }) => {
 };
 
 const unbookSlot = async (parent, { input }, { models }) => {
-    // TODO: Check to make sure user is owner or previously booked
     const { eventId, slotId, title = "" } = input;
     let updatedSlot;
     try {
@@ -95,7 +91,6 @@ const unbookSlot = async (parent, { input }, { models }) => {
 };
 
 const deleteSlot = async (parent, { input }, { models }) => {
-    // TODO: Ensure deleter is owner
     const { eventId, slotId } = input;
     let deletedSlot;
     try {

@@ -9,13 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { DELETE_EVENT } from '../../graphql/mutations';
-import { GET_EVENT } from '../../graphql/queries';
 import { useMutation } from '@apollo/client';
 
 export default function EventItem({ id, title, startDate, endDate }) {
-  const [deleteEvent] = useMutation(DELETE_EVENT, {
-    refetchQueries: [GET_EVENT],
-  });
+  const [deleteEvent] = useMutation(DELETE_EVENT);
   const navigate = useNavigate();
   const secondary = `${new Date(startDate * 1000)} to ${new Date(
     endDate * 1000

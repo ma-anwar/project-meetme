@@ -9,7 +9,7 @@ import EventCalendar from './components/EventCalendar/EventCalendar';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import { Box, CircularProgress } from '@mui/material';
-import { Reddit } from '@mui/icons-material';
+import Credits from './components/Credits/Credits';
 
 function App() {
   const { authReady } = useAuth();
@@ -26,6 +26,7 @@ function App() {
           <NavBar />
         </header>
         <Routes>
+          <Route path="/credits" element={<Credits />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
           <Route path="/" exact element={<Navigate replace to="/signup" />} />

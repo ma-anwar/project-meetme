@@ -1,4 +1,9 @@
-const whitelist = ["http://localhost:3000", "https://studio.apollographql.com"];
+const whitelist = [
+    "http://localhost:3050",
+    "http://localhost:3000",
+    "https://studio.apollographql.com",
+    "https://manwar.dev",
+];
 
 export const corsOptionsDelegate = function (req, callback) {
     let corsOptions;

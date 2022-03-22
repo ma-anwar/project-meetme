@@ -3,6 +3,7 @@ import axios from 'axios';
 import { GET_ME } from '../graphql/queries';
 import { useQuery } from '@apollo/client';
 import { useNavigate, useLocation } from 'react-router-dom';
+import API from '../utils/constants';
 
 const AuthContext = createContext(null);
 
@@ -37,7 +38,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (username, email, password) => {
     try {
-      const resp = await axios.post('/api/auth/signup', {
+      const resp = await axios.post(`${API}/api/auth/signup`, {
         username,
         email,
         password,
@@ -53,7 +54,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const resp = await axios.post('/api/auth/login', { email, password });
+      const resp = await axios.post(`${API}/api/auth/login`, {
+        email,
+        password,
+      });
       await refetch();
       setLoggedIn(true);
       redirect();
@@ -65,7 +69,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('/api/auth/signout');
+      await axios.post(`${API}/api/auth/signout`);
       setLoggedIn(false);
     } catch (err) {
       console.error(err);

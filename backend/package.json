@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "nodemon --delay 5 --exec babel-node src/index.js",
         "build": "babel src -d dist",
-        "start": "npm run build && nodemon dist/index.js"
+        "start": "npm run build && node dist/index.js"
     },
     "keywords": [],
     "author": "",
@@ -42,4 +42,3 @@
         "prettier": "2.5.1"
     }
 }
-

@@ -12,7 +12,7 @@ import { Box, CircularProgress } from '@mui/material';
 import Credits from './components/Credits/Credits';
 
 function App() {
-  const { authReady } = useAuth();
+  const { authReady, loggedIn } = useAuth();
   if (!authReady) {
     return (
       <Box display="flex" alignItems="center" justifyContent="center">
@@ -29,7 +29,6 @@ function App() {
           <Route path="/credits" element={<Credits />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
-          <Route path="/" exact element={<Navigate replace to="/signup" />} />
           <Route
             path="/profile"
             element={
@@ -52,6 +51,16 @@ function App() {
               <ProtectedRoute>
                 <EventCalendar />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/*"
+            element={
+              loggedIn ? (
+                <Navigate replace to="/profile" />
+              ) : (
+                <Navigate replace to="/signup" />
+              )
             }
           />
         </Routes>

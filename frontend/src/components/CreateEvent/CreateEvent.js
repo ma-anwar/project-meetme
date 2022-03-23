@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Box } from '@mui/material';
 import Step0 from './Step0';
 import Step1 from './Step1';
@@ -9,6 +9,7 @@ import { GET_ME } from '../../graphql/queries';
 import { useMutation } from '@apollo/client';
 import { pick } from 'lodash';
 import { useNavigate } from 'react-router-dom';
+import { getUnixTime } from 'date-fns';
 
 export default function CreateEvent() {
   const [newEvent, setNewEvent] = useState({
@@ -20,7 +21,7 @@ export default function CreateEvent() {
   });
   const [formStep, setFormStep] = useState(0);
   const navigate = useNavigate();
-  const [createEvent, { data, error }] = useMutation(CREATE_EVENT, {
+  const [createEvent] = useMutation(CREATE_EVENT, {
     refetchQueries: [GET_ME],
     onCompleted: ({ createEvent }) => {
       navigate(`/cal/${createEvent._id}`);
@@ -37,16 +38,20 @@ export default function CreateEvent() {
   };
 
   const getCreateEventInput = () => {
-    const CreateEventInput = pick(newEvent, [
+    const createEventInput = pick(newEvent, [
       'title',
       'description',
       'timeslotLength',
       'location',
     ]);
-    CreateEventInput.timeslotLength = parseInt(CreateEventInput.timeslotLength);
-    CreateEventInput.startDate = newEvent.dateRange[0];
-    CreateEventInput.endDate = newEvent.dateRange[1];
-    return CreateEventInput;
+    createEventInput.timeslotLength = parseInt(createEventInput.timeslotLength);
+    createEventInput.startDate = String(getUnixTime(newEvent.dateRange[0]));
+    createEventInput.endDate = newEvent.dateRange[1]
+      ? String(getUnixTime(newEvent.dateRange[1]))
+      : createEventInput.startDate;
+    console.log(createEventInput);
+
+    return createEventInput;
   };
 
   const handleChange = (event) => {

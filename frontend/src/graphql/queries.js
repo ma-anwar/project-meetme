@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+
 const GET_ME = gql`
   query me {
     me {
@@ -41,4 +42,18 @@ const GET_EVENT = gql`
     }
   }
 `;
-export { GET_ME, GET_EVENT };
+
+const GET_EVENTS = gql`
+  query me {
+    me {
+      eventsOwned {
+        title
+        description
+        startDate
+        endDate
+        _id
+      }
+    }
+  }
+`;
+export { GET_ME, GET_EVENT, GET_EVENTS };

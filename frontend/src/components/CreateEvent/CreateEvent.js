@@ -49,7 +49,6 @@ export default function CreateEvent() {
     createEventInput.endDate = newEvent.dateRange[1]
       ? String(getUnixTime(newEvent.dateRange[1]))
       : createEventInput.startDate;
-    console.log(createEventInput);
 
     return createEventInput;
   };

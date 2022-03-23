@@ -4,15 +4,21 @@ import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import enCA from 'date-fns/locale/en-CA';
 import format from 'date-fns/format';
+import { isBefore } from 'date-fns';
 import sx from 'mui-sx';
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField, Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { BOOK_SLOT, UNBOOK_SLOT } from '../../graphql/mutations';
 import { GET_EVENT } from '../../graphql/queries';
 import { useMutation } from '@apollo/client';
 
-export default function BookerCalendar({ slots, setSlots, eventId }) {
+export default function BookerCalendar({
+  slots,
+  setSlots,
+  eventId,
+  timeslotLength,
+}) {
   const [bookSlot] = useMutation(BOOK_SLOT, {
     refetchQueries: [GET_EVENT],
   });
@@ -25,6 +31,7 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
   const [cmnt, setCmnt] = useState('');
   const [when, setWhen] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [showError, setShowError] = useState(false);
 
   const { userProfile } = useAuth();
 
@@ -47,16 +54,24 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
   };
 
   const bookAppt = ({ start, end, _id, bookerId }) => {
-    const startWhen = format(start, 'E MMM dd yyyy, HH:mm');
-    const endWhen = format(end, 'E MMM dd yyyy, HH:mm');
-    setSelectedSlot(_id);
-    setWhen(startWhen + ' - ' + endWhen);
-    if (bookerId && bookerId._id === userProfile._id) {
-      setUnBook(true);
+    const today = new Date();
+    if (isBefore(start, today)) {
+      setShowError(true);
       setBook(false);
-    } else {
-      setBook(true);
       setUnBook(false);
+    } else {
+      setShowError(false);
+      const startWhen = format(start, 'E MMM dd yyyy, HH:mm');
+      const endWhen = format(end, 'E MMM dd yyyy, HH:mm');
+      setSelectedSlot(_id);
+      setWhen(startWhen + ' - ' + endWhen);
+      if (bookerId && bookerId._id === userProfile._id) {
+        setUnBook(true);
+        setBook(false);
+      } else {
+        setBook(true);
+        setUnBook(false);
+      }
     }
   };
 
@@ -116,10 +131,17 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
         startAccessor="start"
         endAccessor="end"
         defaultView={Views.WEEK}
+        views={['week', 'day']}
         style={{ height: 500 }}
+        step={timeslotLength}
         selectable
         onSelectEvent={bookAppt}
       />
+      {showError ? (
+        <Typography variant="h6" align="center" p={1}>
+          Sorry, you cannot book an appointment that has passed.
+        </Typography>
+      ) : null}
       {book ? (
         <form onSubmit={handleSubmit}>
           <Box display="flex" flexDirection="column">

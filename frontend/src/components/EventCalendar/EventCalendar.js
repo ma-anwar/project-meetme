@@ -11,7 +11,7 @@ import fromUnixTime from 'date-fns/fromUnixTime';
 
 export default function EventCalendar() {
   const { id: eventId } = useParams();
-  const { data, error } = useQuery(GET_EVENT, {
+  const { data, error, refetch } = useQuery(GET_EVENT, {
     variables: { id: eventId },
   });
 
@@ -45,9 +45,14 @@ export default function EventCalendar() {
         setAvailableAppts(newFormattedDates || []);
       }
     }
+    const interval = setInterval(() => {
+      refetch();
+      console.log(data.event.timeslots.length);
+    }, 3000);
+    return () => clearInterval(interval);
   }, [error, data, isOwner, userProfile._id]);
 
-  const eventUrl = `localhost:3000/cal/${eventId}`;
+  const eventUrl = window.location.href;
 
   return (
     <React.Fragment>
@@ -73,6 +78,7 @@ export default function EventCalendar() {
           slots={allAvailableAppts}
           setSlots={setAvailableAppts}
           eventId={eventId}
+          timeslotLength={data?.event?.timeslotLength}
         />
       )}
     </React.Fragment>

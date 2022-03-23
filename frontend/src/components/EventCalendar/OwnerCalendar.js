@@ -115,7 +115,9 @@ export default function OwnerCalendar({
         startAccessor="start"
         endAccessor="end"
         defaultView={Views.WEEK}
+        views={['week', 'day']}
         style={{ height: 500 }}
+        step={timeslotLength}
         selectable
         onSelectSlot={handleSelect}
         onSelectEvent={viewSlot}

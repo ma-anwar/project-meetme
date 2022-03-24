@@ -50,12 +50,4 @@ const GET_EVENTS = gql`
   }
 `;
 
-const GET_EVENT_IDS = gql`
-  query event {
-    events {
-      _id
-    }
-  }
-`;
-
-export { GET_ME, GET_EVENT, GET_EVENTS, GET_EVENT_IDS };
+export { GET_ME, GET_EVENT, GET_EVENTS };

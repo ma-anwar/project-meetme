@@ -47,7 +47,6 @@ export default function EventCalendar() {
     }
     const interval = setInterval(() => {
       refetch();
-      console.log(data.event.timeslots.length);
     }, 3000);
     return () => clearInterval(interval);
   }, [error, data, isOwner, userProfile._id]);

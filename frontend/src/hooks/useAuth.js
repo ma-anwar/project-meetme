@@ -3,7 +3,7 @@ import axios from 'axios';
 import { GET_ME } from '../graphql/queries';
 import { useQuery } from '@apollo/client';
 import { useNavigate, useLocation } from 'react-router-dom';
-import API from '../utils/constants';
+import { API } from '../utils/constants';
 
 const AuthContext = createContext(null);
 

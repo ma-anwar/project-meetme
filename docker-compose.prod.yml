@@ -47,6 +47,7 @@ services:
       dockerfile: Dockerfile
     ports: 
       - 3000:80
+
   watchtower:
     image: containrrr/watchtower
     volumes:
@@ -56,7 +57,11 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
       - WATCHTOWER_INCLUDE_RESTARTING=true
-    command: --interval 30
+      - WATCHTOWER_HTTP_API_TOKEN=SecretSecretIGottaKeepIt
+    command: --http-api-update
+    expose:
+      - 8080
+
 volumes:
   db:
   cache:

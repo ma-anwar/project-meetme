@@ -111,6 +111,22 @@ const deleteSlot = async (parent, { input }, { models }) => {
     return deletedSlot;
 };
 
+const startPeerCxn = async (parent, { input }, { models }) => {
+    const { eventId, slotId, peerId } = input;
+    const updatedSlot = await models.Timeslot.addPeerId(
+        eventId,
+        slotId,
+        peerId,
+        models.Event
+    );
+
+    if (!updatedSlot) {
+        throw new Error("Adding peerId failed");
+    }
+
+    return updatedSlot;
+};
+
 const timeslotResolvers = {
     Mutation: {
         createSlot,
@@ -118,6 +134,7 @@ const timeslotResolvers = {
         bookSlot,
         unbookSlot,
         deleteSlot,
+        startPeerCxn,
     },
 };
 

@@ -7,6 +7,7 @@ export default gql`
         bookSlot(input: bookSlotInput!): Timeslot!
         unbookSlot(input: bookSlotInput!): Timeslot!
         deleteSlot(input: deleteSlotInput!): Timeslot!
+        startPeerCxn(input: peerCxnInput!): Timeslot!
     }
 
     type Timeslot {
@@ -15,6 +16,7 @@ export default gql`
         end: String!
         bookerId: User
         title: String
+        peerId: String
     }
 
     input createSlotInput {
@@ -34,5 +36,10 @@ export default gql`
     input deleteSlotInput {
         eventId: ID!
         slotId: ID!
+    }
+    input peerCxnInput {
+        eventId: ID!
+        slotId: ID!
+        peerId: ID!
     }
 `;

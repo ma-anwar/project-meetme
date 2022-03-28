@@ -69,8 +69,11 @@ const DELETE_EVENT = gql`
 `;
 
 const START_PEER_CXN = gql`
-  mutation startPeerCxn($input: peerCxnInput) {
-    startPeerCxn(input: $input)
+  mutation addPeerId($input: peerCxnInput) {
+    addPeerId(input: $input) {
+      _id
+      peerId
+    }
   }
 `;
 

@@ -7,7 +7,7 @@ export default gql`
         bookSlot(input: bookSlotInput!): Timeslot!
         unbookSlot(input: bookSlotInput!): Timeslot!
         deleteSlot(input: deleteSlotInput!): Timeslot!
-        startPeerCxn(input: peerCxnInput!): Timeslot!
+        addPeerId(input: peerCxnInput!): Timeslot!
     }
 
     type Timeslot {

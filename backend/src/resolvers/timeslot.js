@@ -111,7 +111,7 @@ const deleteSlot = async (parent, { input }, { models }) => {
     return deletedSlot;
 };
 
-const startPeerCxn = async (parent, { input }, { models }) => {
+const addPeerId = async (parent, { input }, { models }) => {
     const { eventId, slotId, peerId } = input;
     const updatedSlot = await models.Timeslot.addPeerId(
         eventId,
@@ -134,7 +134,7 @@ const timeslotResolvers = {
         bookSlot,
         unbookSlot,
         deleteSlot,
-        startPeerCxn,
+        addPeerId,
     },
 };
 

@@ -31,6 +31,7 @@ const GET_EVENT = gql`
         bookerId {
           _id
         }
+        peerId
       }
     }
   }
@@ -50,4 +51,21 @@ const GET_EVENTS = gql`
   }
 `;
 
-export { GET_ME, GET_EVENT, GET_EVENTS };
+const GET_TIMESLOTS = gql`
+  query event($id: String!) {
+    event(id: $id) {
+      timeslots {
+        _id
+        start
+        end
+        title
+        bookerId {
+          _id
+        }
+        peerId
+      }
+    }
+  }
+`;
+
+export { GET_ME, GET_EVENT, GET_EVENTS, GET_TIMESLOTS };

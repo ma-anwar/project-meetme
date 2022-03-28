@@ -1,8 +1,8 @@
 import express from "express";
 import httpStatus from "http-status";
-import { signup, login, signout } from "../controllers/authController";
-import validate from "../validators/validate";
-import { signupRules, loginRules } from "../validators/authValidator";
+import { signup, login, signout } from "./authController";
+import validate from "../utils/validate";
+import { signupRules, loginRules } from "./authValidator";
 
 const authRouter = express.Router();
 

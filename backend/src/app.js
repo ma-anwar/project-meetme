@@ -7,8 +7,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import connectRedis from "connect-redis";
 import redisClient from "./utils/redisLoader";
-import isAuthenticated from "./middleware/isAuthenticated";
-import authRouter from "./routes/authRoutes";
+import isAuthenticated from "./auth/authMiddleware";
+import authRouter from "./auth/authRoutes";
 import corsOptions from "./utils/corsOptions";
 
 const environment = process.env.NODE_ENV || "development";

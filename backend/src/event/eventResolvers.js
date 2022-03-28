@@ -1,4 +1,4 @@
-import { eventCreationRules } from "../validators/eventValidator";
+import { eventCreationRules } from "./eventValidator";
 
 const createEvent = async (parent, { input }, { models, user }) => {
     const { title, description, location, startDate, endDate, timeslotLength } =

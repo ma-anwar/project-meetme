@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { isAfter, isBefore } from "date-fns";
-import { timeslotSchema } from "./timeslot";
+import { timeslotSchema } from "../timeslot/timeslotModel";
 
 const eventSchema = Schema(
     {

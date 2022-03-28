@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
-import User from "./user";
-import Event from "./event";
+import User from "../user/userModel";
+import Event from "../event/eventModel";
 import Notification from "./notification";
 import Participating from "./participating";
-import Timeslot from "./timeslot";
+import Timeslot from "../timeslot/timeslotModel";
 
 const connectDb = () =>
     mongoose.connect(process.env.DB_URL, {

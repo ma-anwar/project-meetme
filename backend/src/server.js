@@ -2,8 +2,8 @@ import { ApolloServer } from "apollo-server-express";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
 import models from "./models";
-import typeDefs from "./schema";
-import resolvers from "./resolvers";
+import typeDefs from "./graphql/schema";
+import resolvers from "./graphql/resolvers";
 
 const BASIC_LOGGING = {
     requestDidStart(requestContext) {

@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import asyncWrap from "../utils/asyncWrap";
 
-import User from "../models/user";
+import User from "../user/userModel";
 
 const getSessionVars = function (user) {
     return { _id: user._id, username: user.username, email: user.email };

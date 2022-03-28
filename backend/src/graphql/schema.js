@@ -1,7 +1,7 @@
 import { gql } from "apollo-server-express";
-import userSchema from "./user";
-import eventSchema from "./event";
-import timeslotSchema from "./timeslot";
+import userSchema from "../user/userSchema";
+import eventSchema from "../event/eventSchema";
+import timeslotSchema from "../timeslot/timeslotSchema";
 
 const masterSchema = gql`
     type Query {

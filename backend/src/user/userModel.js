@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
-import { notificationSchema } from "./notification";
+import { notificationSchema } from "../models/notification";
 
 import { SALT_ROUNDS, EVENT_LIMIT } from "../utils/constants";
 

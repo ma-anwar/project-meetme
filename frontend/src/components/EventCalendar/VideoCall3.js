@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { GET_EVENT, GET_TIMESLOTS } from '../../graphql/queries';
+import { GET_TIMESLOTS } from '../../graphql/queries';
 import { START_PEER_CXN } from '../../graphql/mutations';
 import { useQuery, useMutation } from '@apollo/client';
 import Peer from 'peerjs';
@@ -67,22 +67,6 @@ export default function VideoCall3() {
         addPeerId({
           variables: { input: peerCxn },
         });
-      } else {
-        // console.log('I am owner');
-        // if (dataTS) {
-        //   console.log('HELLO DATATts');
-        //   let tslots = dataTS?.event?.timeslots;
-        //   console.log(dataTS);
-        //   console.log(tslots.length);
-        //   for (let i = 0; i < tslots.length; i++) {
-        //     if (tslots[i]._id === tsId) {
-        //       console.log('IT ME');
-        //       console.log(tslots[i]);
-        //       setRemotePeerIdValue(tslots[i].peerId);
-        //     }
-        //   }
-        // }
-        // console.log('did datats say hello?');
       }
     });
 

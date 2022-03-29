@@ -111,6 +111,18 @@ const deleteSlot = async (parent, { input }, { models }) => {
     return deletedSlot;
 };
 
+const getSlot = async (parent, { input }, { models }) => {
+    const { eventId, slotId } = input;
+    const event = await models.Event.findOne(
+        { " _id": eventId, "timeslots._id": slotId },
+        { "timeslots.$": 1 }
+    ).catch((err) => {
+        console.log(err);
+        return null;
+    });
+    return event.timeslots[0];
+};
+
 const addPeerId = async (parent, { input }, { models }) => {
     const { eventId, slotId, peerId } = input;
     const updatedSlot = await models.Timeslot.addPeerId(
@@ -128,6 +140,9 @@ const addPeerId = async (parent, { input }, { models }) => {
 };
 
 const timeslotResolvers = {
+    Query: {
+        getSlot,
+    },
     Mutation: {
         createSlot,
         createSlots,

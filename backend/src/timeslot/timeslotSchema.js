@@ -1,6 +1,9 @@
 import { gql } from "apollo-server-express";
 
 export default gql`
+    extend type Query {
+        getSlot(input: deleteSlotInput!): Timeslot!
+    }
     extend type Mutation {
         createSlot(input: createSlotInput): Timeslot
         createSlots(input: createSlotsInput!): [Timeslot]

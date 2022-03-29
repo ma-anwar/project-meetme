@@ -51,8 +51,9 @@ export default function OwnerCalendar({
     });
   };
 
-  const viewSlot = ({ start, end, _id, bookerId }) => {
+  const viewSlot = ({ start, end, _id, bookerId, peerInfo }) => {
     setSelectedSlot(_id);
+    console.log('THE TS ID ' + selectedSlot);
     if (bookerId) {
       const startWhen = format(start, 'E MMM dd yyyy, HH:mm');
       const endWhen = format(end, 'E MMM dd yyyy, HH:mm');
@@ -61,6 +62,7 @@ export default function OwnerCalendar({
         who: bookerId._id,
         when: startWhen + ' - ' + endWhen,
         cmnts: '',
+        peerIn: peerInfo ? peerInfo : '',
       };
       setSlotInfo(slInfo);
       setSeeSlotInfo(true);
@@ -76,6 +78,8 @@ export default function OwnerCalendar({
     setSlotInfo({});
     setSeeSlotInfo(false);
   };
+
+  const handleCall = (e) => {};
 
   const handleDelete = (e) => {
     e.preventDefault();
@@ -142,6 +146,13 @@ export default function OwnerCalendar({
           <TextField
             sx={sx(base)}
             inputProps={{ style: { fontWeight: 'bold' } }}
+            label="Your Peer Id"
+            value={slotInfo.peerIn._id}
+            disabled
+          />
+          <TextField
+            sx={sx(base)}
+            inputProps={{ style: { fontWeight: 'bold' } }}
             label="Who"
             name="appt_booker"
             value={slotInfo.who}
@@ -171,6 +182,16 @@ export default function OwnerCalendar({
             onClick={handleClose}
           >
             Close
+          </Button>
+          <Button
+            sx={sx(base)}
+            type="button"
+            variant="outlined"
+            // href="/video_call3"
+            href={'/video_call3/' + eventId + '/' + selectedSlot}
+            // onClick={handleCall}
+          >
+            Start Call
           </Button>
         </Box>
       ) : null}

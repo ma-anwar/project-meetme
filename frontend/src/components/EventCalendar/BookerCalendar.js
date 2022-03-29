@@ -56,9 +56,9 @@ export default function BookerCalendar({
   const bookAppt = ({ start, end, _id, bookerId }) => {
     const today = new Date();
     if (isBefore(start, today)) {
-      setShowError(true);
-      setBook(false);
-      setUnBook(false);
+      // setShowError(true);
+      // setBook(false);
+      // setUnBook(false);
     } else {
       setShowError(false);
       const startWhen = format(start, 'E MMM dd yyyy, HH:mm');
@@ -228,6 +228,15 @@ export default function BookerCalendar({
               onClick={handleClose}
             >
               Close
+            </Button>
+            <Button
+              sx={sx(base)}
+              type="button"
+              variant="outlined"
+              href={'/video_call3/' + eventId + '/' + selectedSlot}
+              // onClick={handleCall}
+            >
+              Start Call
             </Button>
           </Box>
         </Box>

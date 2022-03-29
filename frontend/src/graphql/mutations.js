@@ -69,7 +69,7 @@ const DELETE_EVENT = gql`
 `;
 
 const START_PEER_CXN = gql`
-  mutation addPeerId($input: peerCxnInput) {
+  mutation addPeerId($input: peerCxnInput!) {
     addPeerId(input: $input) {
       _id
       peerId

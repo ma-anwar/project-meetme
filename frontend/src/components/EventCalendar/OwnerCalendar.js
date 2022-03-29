@@ -2,6 +2,7 @@ import { Box, TextField, Button, Typography } from '@mui/material';
 import sx from 'mui-sx';
 import { useState } from 'react';
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
+import { useNavigate } from 'react-router-dom';
 import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
@@ -17,6 +18,7 @@ export default function OwnerCalendar({
   setSlots,
   eventId,
   timeslotLength,
+  isOwner,
 }) {
   const [createSlots] = useMutation(CREATE_SLOTS, {
     refetchQueries: [GET_EVENT],
@@ -28,6 +30,7 @@ export default function OwnerCalendar({
   const [seeSlotInfo, setSeeSlotInfo] = useState(false);
   const [slotInfo, setSlotInfo] = useState({});
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const navigate = useNavigate();
 
   const handleSelect = ({ start, end }) => {
     const slotLength = timeslotLength;
@@ -192,6 +195,16 @@ export default function OwnerCalendar({
             // onClick={handleCall}
           >
             Start Call
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() =>
+              navigate('/video_call3/' + eventId + '/' + selectedSlot, {
+                state: { ownIt: isOwner },
+              })
+            }
+          >
+            Start Call2
           </Button>
         </Box>
       ) : null}

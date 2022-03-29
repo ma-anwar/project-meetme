@@ -5,6 +5,7 @@ import getDay from 'date-fns/getDay';
 import enCA from 'date-fns/locale/en-CA';
 import format from 'date-fns/format';
 import { isBefore } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import sx from 'mui-sx';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { useState } from 'react';
@@ -18,6 +19,7 @@ export default function BookerCalendar({
   setSlots,
   eventId,
   timeslotLength,
+  isOwner,
 }) {
   const [bookSlot] = useMutation(BOOK_SLOT, {
     refetchQueries: [GET_EVENT],
@@ -32,6 +34,7 @@ export default function BookerCalendar({
   const [when, setWhen] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [showError, setShowError] = useState(false);
+  const navigate = useNavigate();
 
   const { userProfile } = useAuth();
 
@@ -54,6 +57,7 @@ export default function BookerCalendar({
   };
 
   const bookAppt = ({ start, end, _id, bookerId }) => {
+    console.log('BUT THE OWNER ' + isOwner);
     const today = new Date();
     if (isBefore(start, today)) {
       // setShowError(true);
@@ -237,6 +241,16 @@ export default function BookerCalendar({
               // onClick={handleCall}
             >
               Start Call
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() =>
+                navigate('/video_call3/' + eventId + '/' + selectedSlot, {
+                  state: { ownIt: isOwner },
+                })
+              }
+            >
+              Start Call2
             </Button>
           </Box>
         </Box>

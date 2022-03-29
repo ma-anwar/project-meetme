@@ -83,6 +83,7 @@ export default function EventCalendar() {
           setSlots={setAvailableAppts}
           eventId={eventId}
           timeslotLength={data?.event?.timeslotLength}
+          isOwner={isOwner}
         />
       ) : (
         <BookerCalendar
@@ -90,6 +91,7 @@ export default function EventCalendar() {
           setSlots={setAvailableAppts}
           eventId={eventId}
           timeslotLength={data?.event?.timeslotLength}
+          isOwner={isOwner}
         />
       )}
     </React.Fragment>

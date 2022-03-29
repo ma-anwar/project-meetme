@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { GET_TIMESLOTS } from '../../graphql/queries';
 import { START_PEER_CXN } from '../../graphql/mutations';
@@ -9,6 +9,7 @@ import Peer from 'peerjs';
 
 export default function VideoCall3() {
   const { eventId, tsId } = useParams();
+  const { state } = useLocation();
 
   const [peerId, setPeerId] = useState(null);
   const [remotePeerIdValue, setRemotePeerIdValue] = useState('');
@@ -19,14 +20,9 @@ export default function VideoCall3() {
   //SEPERATE based on owner vs booker
   const { userProfile } = useAuth();
 
-  //NEED QUERY TO GET timeslot based on id from param
-  //timeslot should provide eventId so i can query for it
+  let isOwner = state?.ownIt;
 
-  //given eventId, need to query for event info
-  //let isOwner = event?.ownerId?._id === userProfile._id;
-  let isOwner = userProfile.username === 'test1';
-  //let isOwner = true;
-
+  //NEED QUERY TO GET 'SINGLE' timeslot based on id from param
   //   const {
   //     data: dataTS,
   //     error: errorTS,
@@ -35,11 +31,7 @@ export default function VideoCall3() {
   //     variables: { id: eventId, tsId: tsId },
   //   });
 
-  const {
-    data: dataTS,
-    error: errorTS,
-    refetch: refetchTS,
-  } = useQuery(GET_TIMESLOTS, {
+  const { data: dataTS, error: errorTS } = useQuery(GET_TIMESLOTS, {
     variables: { id: eventId },
   });
 
@@ -48,6 +40,8 @@ export default function VideoCall3() {
   });
 
   useEffect(() => {
+    console.log('BISMILLAH ' + state?.ownIt);
+
     const peer = new Peer({
       host: 'meetme-peers.herokuapp.com',
       port: 80,
@@ -57,7 +51,8 @@ export default function VideoCall3() {
     peer.on('open', (id) => {
       setPeerId(id);
       console.log('SETTING 1, setting peer id on open with id ' + id);
-      if (!isOwner) {
+      if (isOwner === false) {
+        console.log(' I am NOT the owner, so add id to ts' + isOwner);
         const peerCxn = {
           eventId: eventId,
           slotId: tsId,
@@ -90,7 +85,7 @@ export default function VideoCall3() {
     });
 
     peerInstance.current = peer;
-  }, []);
+  }, [isOwner, userProfile._id]);
 
   const call = (remotePeerId) => {
     console.log(
@@ -114,8 +109,6 @@ export default function VideoCall3() {
     }
     console.log('did datats say hello?');
     console.log(dataTS);
-    console.log('maybe err');
-    console.log(errorTS);
 
     var getUserMedia =
       navigator.getUserMedia ||
@@ -143,9 +136,9 @@ export default function VideoCall3() {
       <div>
         <h1>Current user id is {peerId}</h1>
         {isOwner ? (
-          <h1>Current user id is {remotePeerIdValue}</h1>
+          <h1>O Current user id is {remotePeerIdValue}</h1>
         ) : (
-          <h1>Current user id is {peerId}</h1>
+          <h1>O0 Current user id is {peerId}</h1>
         )}
         <input
           type="text"

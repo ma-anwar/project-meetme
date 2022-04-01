@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth.js';
+import { API } from '../../utils/constants';
+import axios from 'axios';
 
 export default function SignupForm() {
-  const { signup } = useAuth();
+  const { setLoggedIn, redirect, refetch } = useAuth();
 
   const [usernameErr, setUsernameErr] = useState({
     show: false,
@@ -126,6 +128,22 @@ export default function SignupForm() {
     }
   };
 
+  const signup = async (username, email, password) => {
+    try {
+      const resp = await axios.post(`${API}/api/auth/signup`, {
+        username,
+        email,
+        password,
+      });
+      await refetch();
+      setLoggedIn(true);
+      redirect();
+    } catch (err) {
+      setLoggedIn(false);
+      document.querySelector('#error_box').innerHTML = err;
+    }
+  };
+
   return (
     <Box display="flex" flexDirection="column" alignItems="center" m={1}>
       <Typography variant="h6" align="center" p={1}>
@@ -179,6 +197,7 @@ export default function SignupForm() {
           <Button type="submit" variant="contained" sx={{ m: 1 }}>
             Sign up
           </Button>
+          <Typography id="error_box" style={{ color: 'red' }}></Typography>
         </Box>
       </form>
     </Box>

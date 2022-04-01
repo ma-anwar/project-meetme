@@ -36,37 +36,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [data, error]);
 
-  const signup = async (username, email, password) => {
-    try {
-      const resp = await axios.post(`${API}/api/auth/signup`, {
-        username,
-        email,
-        password,
-      });
-      await refetch();
-      setLoggedIn(true);
-      redirect();
-    } catch (err) {
-      setLoggedIn(false);
-      console.error(err);
-    }
-  };
-
-  const login = async (email, password) => {
-    try {
-      const resp = await axios.post(`${API}/api/auth/login`, {
-        email,
-        password,
-      });
-      await refetch();
-      setLoggedIn(true);
-      redirect();
-    } catch (err) {
-      setLoggedIn(false);
-      console.error(err);
-    }
-  };
-
   const logout = async () => {
     try {
       await axios.post(`${API}/api/auth/signout`);
@@ -79,12 +48,13 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
+        setLoggedIn,
         loggedIn,
-        login,
         logout,
-        signup,
         authReady,
         userProfile,
+        redirect,
+        refetch,
       }}
     >
       {children}

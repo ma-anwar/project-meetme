@@ -8,7 +8,7 @@ import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import enCA from 'date-fns/locale/en-CA';
 import format from 'date-fns/format';
-import { add, getUnixTime } from 'date-fns';
+import { add, getUnixTime, isBefore } from 'date-fns';
 import { CREATE_SLOTS, DELETE_SLOT } from '../../graphql/mutations';
 import { GET_EVENT } from '../../graphql/queries';
 import { useMutation } from '@apollo/client';
@@ -30,28 +30,35 @@ export default function OwnerCalendar({
   const [seeSlotInfo, setSeeSlotInfo] = useState(false);
   const [slotInfo, setSlotInfo] = useState({});
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [tooEarly, setTooEarly] = useState(false);
   const navigate = useNavigate();
 
   const handleSelect = ({ start, end }) => {
-    const slotLength = timeslotLength;
+    const today = new Date();
+    if (isBefore(start, today)) {
+      setTooEarly(true);
+    } else {
+      setTooEarly(false);
+      const slotLength = timeslotLength;
 
-    let startTime = start;
-    let endTime = end;
-    const newSlots = [];
+      let startTime = start;
+      let endTime = end;
+      const newSlots = [];
 
-    while (startTime < endTime) {
-      const finTime = add(startTime, { minutes: slotLength });
-      const newSlot = {
-        title: 'Empty slot',
-        start: `${getUnixTime(startTime)}`,
-        end: `${getUnixTime(finTime)}`,
-      };
-      newSlots.push(newSlot);
-      startTime = finTime;
+      while (startTime < endTime) {
+        const finTime = add(startTime, { minutes: slotLength });
+        const newSlot = {
+          title: 'Empty slot',
+          start: `${getUnixTime(startTime)}`,
+          end: `${getUnixTime(finTime)}`,
+        };
+        newSlots.push(newSlot);
+        startTime = finTime;
+      }
+      createSlots({
+        variables: { input: { eventId: eventId, slots: newSlots } },
+      });
     }
-    createSlots({
-      variables: { input: { eventId: eventId, slots: newSlots } },
-    });
   };
 
   const viewSlot = ({ start, end, _id, bookerId, peerInfo }) => {
@@ -127,6 +134,11 @@ export default function OwnerCalendar({
         onSelectSlot={handleSelect}
         onSelectEvent={viewSlot}
       />
+      {tooEarly ? (
+        <Typography align="center" style={{ color: 'red' }}>
+          Please select a start time in the future.
+        </Typography>
+      ) : null}
       {seeSlot ? (
         <Box display="flex" alignItems="center" flexDirection="column" m={1}>
           <Typography variant="body1">

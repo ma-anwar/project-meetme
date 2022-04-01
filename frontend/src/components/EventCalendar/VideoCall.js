@@ -7,7 +7,7 @@ import { START_PEER_CXN } from '../../graphql/mutations';
 import { useQuery, useMutation } from '@apollo/client';
 import Peer from 'peerjs';
 
-export default function VideoCall3() {
+export default function VideoCall() {
   const { eventId, tsId } = useParams();
   const { state } = useLocation();
   const navigate = useNavigate();

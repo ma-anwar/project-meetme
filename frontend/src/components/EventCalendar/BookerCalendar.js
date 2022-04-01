@@ -57,12 +57,11 @@ export default function BookerCalendar({
   };
 
   const bookAppt = ({ start, end, _id, bookerId }) => {
-    console.log('BUT THE OWNER ' + isOwner);
     const today = new Date();
     if (isBefore(start, today)) {
-      // setShowError(true);
-      // setBook(false);
-      // setUnBook(false);
+      setShowError(true);
+      setBook(false);
+      setUnBook(false);
     } else {
       setShowError(false);
       const startWhen = format(start, 'E MMM dd yyyy, HH:mm');
@@ -236,21 +235,14 @@ export default function BookerCalendar({
             <Button
               sx={sx(base)}
               type="button"
-              variant="outlined"
-              href={'/video_call3/' + eventId + '/' + selectedSlot}
-              // onClick={handleCall}
-            >
-              Start Call
-            </Button>
-            <Button
               variant="contained"
               onClick={() =>
-                navigate('/video_call3/' + eventId + '/' + selectedSlot, {
+                navigate('/video_call/' + eventId + '/' + selectedSlot, {
                   state: { ownIt: isOwner },
                 })
               }
             >
-              Start Call2
+              Start Call
             </Button>
           </Box>
         </Box>

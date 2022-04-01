@@ -82,8 +82,6 @@ export default function OwnerCalendar({
     setSeeSlotInfo(false);
   };
 
-  const handleCall = (e) => {};
-
   const handleDelete = (e) => {
     e.preventDefault();
 
@@ -149,13 +147,6 @@ export default function OwnerCalendar({
           <TextField
             sx={sx(base)}
             inputProps={{ style: { fontWeight: 'bold' } }}
-            label="Your Peer Id"
-            value={slotInfo.peerIn._id}
-            disabled
-          />
-          <TextField
-            sx={sx(base)}
-            inputProps={{ style: { fontWeight: 'bold' } }}
             label="Who"
             name="appt_booker"
             value={slotInfo.who}
@@ -189,22 +180,14 @@ export default function OwnerCalendar({
           <Button
             sx={sx(base)}
             type="button"
-            variant="outlined"
-            // href="/video_call3"
-            href={'/video_call3/' + eventId + '/' + selectedSlot}
-            // onClick={handleCall}
-          >
-            Start Call
-          </Button>
-          <Button
             variant="contained"
             onClick={() =>
-              navigate('/video_call3/' + eventId + '/' + selectedSlot, {
+              navigate('/video_call/' + eventId + '/' + selectedSlot, {
                 state: { ownIt: isOwner },
               })
             }
           >
-            Start Call2
+            Start Call
           </Button>
         </Box>
       ) : null}

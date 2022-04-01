@@ -6,8 +6,7 @@ import NavBar from './components/NavBar/NavBar';
 import Profile from './components/Profile/Profile';
 import CreateEvent from './components/CreateEvent/CreateEvent';
 import EventCalendar from './components/EventCalendar/EventCalendar';
-import VideoCall from './components/EventCalendar/VideoCall2';
-import VideoCall3 from './components/EventCalendar/VideoCall3';
+import VideoCall from './components/EventCalendar/VideoCall';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import { Box, CircularProgress } from '@mui/material';
@@ -56,18 +55,10 @@ function App() {
             }
           />
           <Route
-            path="/video_call"
+            path="/video_call/:eventId/:tsId"
             element={
               <ProtectedRoute>
                 <VideoCall />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/video_call3/:eventId/:tsId"
-            element={
-              <ProtectedRoute>
-                <VideoCall3 />
               </ProtectedRoute>
             }
           />

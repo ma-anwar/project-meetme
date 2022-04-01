@@ -69,21 +69,4 @@ const GET_TIMESLOTS = gql`
   }
 `;
 
-const GET_TIMESLOT = gql`
-  query event($id: String!, $tsId: String!) {
-    event(id: $id) {
-      timeslots(filter: { _id: $tsId }) {
-        _id
-        start
-        end
-        title
-        bookerId {
-          _id
-        }
-        peerId
-      }
-    }
-  }
-`;
-
-export { GET_ME, GET_EVENT, GET_EVENTS, GET_TIMESLOTS, GET_TIMESLOT };
+export { GET_ME, GET_EVENT, GET_EVENTS, GET_TIMESLOTS };

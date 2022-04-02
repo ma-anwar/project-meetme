@@ -16,14 +16,15 @@ async function startApolloServer(port) {
 
     const serverCleanup = useServer({ schema }, wsServer);
 
-    const peerServer = ExpressPeerServer(httpServer, {
+    /*    const peerServer = ExpressPeerServer(httpServer, {
         debug: true,
         path: "/meetme",
         port,
         proxied: true,
     });
+    */
 
-    app.use("/peerjs", peerServer);
+    // app.use("/peerjs", peerServer);
 
     await server.start();
     server.applyMiddleware({

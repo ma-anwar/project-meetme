@@ -20,6 +20,7 @@
     "graphql-ws": "^5.6.4",
     "lodash": "^4.17.21",
     "mui-sx": "^1.0.0",
+    "peerjs": "^1.3.2",
     "react": "^17.0.2",
     "react-big-calendar": "^0.39.3",
     "react-dom": "^17.0.2",

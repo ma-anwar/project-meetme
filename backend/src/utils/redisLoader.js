@@ -1,18 +1,21 @@
 /* eslint-disable no-console */
 import Redis from "ioredis";
 
-const redisClient = new Redis("redis");
+const getRedisClient = () => {
+    const redisClient = new Redis("redis");
 
-redisClient.on("connect", () => {
-    console.log("Redis: succesfully connected");
-});
+    redisClient.on("connect", () => {
+        console.log("Redis: succesfully connected");
+    });
 
-redisClient.on("error", (err) => {
-    console.log(`Redis: Error ${err} `);
-});
+    redisClient.on("error", (err) => {
+        console.log(`Redis: Error ${err} `);
+    });
 
-redisClient.on("reconnecting", () => {
-    console.log("Redis: Reconnecting. ");
-});
+    redisClient.on("reconnecting", () => {
+        console.log("Redis: Reconnecting. ");
+    });
 
-export default redisClient;
+    return redisClient;
+};
+export default getRedisClient;

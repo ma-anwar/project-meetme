@@ -11,6 +11,9 @@ const masterSchema = gql`
     type Mutation {
         _: String
     }
+    type Subscription {
+        hello: String
+    }
 `;
 
 export default [masterSchema, userSchema, eventSchema, timeslotSchema];

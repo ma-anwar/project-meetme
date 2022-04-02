@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 import connectRedis from "connect-redis";
-import redisClient from "./utils/redisLoader";
+import getRedisClient from "./utils/redisLoader";
 import isAuthenticated from "./auth/authMiddleware";
 import authRouter from "./auth/authRoutes";
 import corsOptions from "./utils/corsOptions";
@@ -26,7 +26,7 @@ const RedisStore = connectRedis(session);
 
 app.use(
     session({
-        store: new RedisStore({ client: redisClient }),
+        store: new RedisStore({ client: getRedisClient() }),
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: true,

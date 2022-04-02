@@ -35,7 +35,6 @@ const server = new ApolloServer({
         const user = await models.User.findOne({ _id: req.session.user._id });
         return { models, user };
     },
-    plugins: [BASIC_LOGGING],
 });
 
 export default server;

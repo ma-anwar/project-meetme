@@ -1,140 +1,97 @@
+import { RedisPubSub } from "graphql-redis-subscriptions";
+import getRedisClient from "../utils/redisLoader";
 import { slotCreationRules } from "./timeslotValidators";
 
-const createSlot = async (parent, { input }, { models }) => {
-    const { eventId, datetime, note } = input;
-    try {
-        await slotCreationRules.validate(
-            {
-                datetime,
-                eventId,
-                note,
-            },
-            { abortEarly: false, context: { Events: models.Event } }
-        );
-    } catch (err) {
-        return err;
-    }
+const pubsub = new RedisPubSub({
+    publisher: getRedisClient(),
+    subscriber: getRedisClient(),
+});
 
-    const event = await models.Event.findOne({ _id: eventId });
-    const fitsInEvent = await event.fitsInEvent(new Date(datetime));
-    if (!fitsInEvent) {
-        throw new Error(
-            "Timeslot does not fit between the start and end dates of the event!"
-        );
-    }
+const SLOT_UPDATED = "slot_updated";
 
-    const timeslot = await models.Timeslot.create({ datetime, note });
-
-    await models.Event.updateOne(
-        { _id: eventId },
-        { $push: { timeslots: timeslot } }
-    );
-    return timeslot;
+const publish = async (type, slot) => {
+    pubsub
+        .publish(SLOT_UPDATED, {
+            slotUpdated: { type, slot },
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 };
 
 const createSlots = async (parent, { input }, { models, user }) => {
     const { eventId, slots } = input;
-    const event = await models.Event.findOne({ _id: eventId });
-    if (!user._id.equals(event.ownerId)) {
-        throw new Error("Unauthorized to create slots on non-owned calendar");
-    }
+
+    await models.Event.throwIfNotOwner(eventId, user._id);
+
     const createdSlots = await models.Timeslot.create(...slots);
-    await models.Event.updateOne(
-        { _id: eventId },
-        { $push: { timeslots: createdSlots } }
-    );
-    const updatedEvent = await models.Event.findOne({ _id: eventId });
-    await updatedEvent.populate("timeslots");
-    return updatedEvent.timeslots;
+
+    await models.Event.addSlots(eventId, createdSlots);
+
+    createdSlots.map((slot) => publish("CREATE", slot));
+
+    return createdSlots;
 };
 
 const bookSlot = async (parent, { input }, { models, user }) => {
-    const { eventId, slotId, title = "" } = input;
-    let updatedSlot;
-    try {
-        updatedSlot = await models.Event.findOneAndUpdate(
-            { " _id": eventId, "timeslots._id": slotId },
-            {
-                $set: {
-                    "timeslots.$.bookerId": user,
-                    "timeslots.$.title": title,
-                },
-            }
-        );
-    } catch (err) {
-        console.log(err);
-        throw new Error("Unable to update");
-    }
+    const { eventId, slotId, title = "", comment = "" } = input;
 
-    return updatedSlot;
+    await models.Event.throwIfOwner(eventId, user._id);
+
+    const toBeUpdated = await models.Event.bookSlot(
+        eventId,
+        slotId,
+        user._id,
+        title,
+        comment
+    );
+
+    const updatedSlot = await models.Event.getSlot(eventId, slotId);
+    publish("UPDATE", updatedSlot);
+
+    return toBeUpdated;
 };
 
 const unbookSlot = async (parent, { input }, { models }) => {
-    const { eventId, slotId, title = "" } = input;
-    let updatedSlot;
-    try {
-        updatedSlot = await models.Event.findOneAndUpdate(
-            { " _id": eventId, "timeslots._id": slotId },
-            {
-                $set: {
-                    "timeslots.$.bookerId": null,
-                    "timeslots.$.title": title,
-                },
-            }
-        );
-    } catch (err) {
-        console.log(err);
-        throw new Error("Unable to unbook slot");
-    }
+    // TODO: Check that booker is unbooking
+    const { eventId, slotId, title = "", comment = "" } = input;
+
+    await models.Event.unbookSlot(eventId, slotId, title, comment);
+
+    const updatedSlot = await models.Event.getSlot(eventId, slotId);
+
+    publish("UPDATE", updatedSlot);
 
     return updatedSlot;
 };
 
-const deleteSlot = async (parent, { input }, { models }) => {
+const deleteSlot = async (parent, { input }, { models, user }) => {
+    // TODO: Check if slot is already booked
     const { eventId, slotId } = input;
-    let deletedSlot;
-    try {
-        deletedSlot = await models.Event.findOneAndUpdate(
-            {
-                _id: eventId,
-            },
-            {
-                $pull: {
-                    timeslots: { _id: slotId },
-                },
-            }
-        );
-    } catch (err) {
-        console.log(err);
-        throw new Error("Deletion failed");
-    }
-    return deletedSlot;
+
+    await models.Event.throwIfNotEvent(eventId);
+    await models.Event.throwIfNotOwner(eventId, user._id);
+
+    const toDelete = await models.Event.getSlot(eventId, slotId);
+
+    await models.Event.deleteSlot(eventId, slotId);
+    publish("DELETE", toDelete);
+
+    return toDelete;
 };
 
 const getSlot = async (parent, { input }, { models }) => {
     const { eventId, slotId } = input;
-    const event = await models.Event.findOne(
-        { " _id": eventId, "timeslots._id": slotId },
-        { "timeslots.$": 1 }
-    ).catch((err) => {
-        console.log(err);
-        return null;
-    });
-    return event.timeslots[0];
+    const slot = await models.Event.getSlot(eventId, slotId);
+    return slot;
 };
 
 const addPeerId = async (parent, { input }, { models }) => {
     const { eventId, slotId, peerId } = input;
-    const updatedSlot = await models.Timeslot.addPeerId(
-        eventId,
-        slotId,
-        peerId,
-        models.Event
-    );
+    await models.Event.addPeerId(eventId, slotId, peerId);
 
-    if (!updatedSlot) {
-        throw new Error("Adding peerId failed");
-    }
+    const updatedSlot = await models.Event.getSlot(eventId, slotId);
+    publish("UPDATE", updatedSlot);
 
     return updatedSlot;
 };
@@ -144,12 +101,16 @@ const timeslotResolvers = {
         getSlot,
     },
     Mutation: {
-        createSlot,
         createSlots,
         bookSlot,
         unbookSlot,
         deleteSlot,
         addPeerId,
+    },
+    Subscription: {
+        slotUpdated: {
+            subscribe: (_, args) => pubsub.asyncIterator([SLOT_UPDATED]),
+        },
     },
 };
 

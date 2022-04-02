@@ -43,20 +43,22 @@ const createEvent = async (parent, { input }, { models, user }) => {
 
 const deleteEvent = async (parent, { input }, { models }) => {
     const { eventId } = input;
-    let deleted;
-    try {
-        deleted = await models.Event.deleteOne({ _id: eventId });
-    } catch (err) {
+    await models.Event.deleteOne({ _id: eventId }).catch((err) => {
         console.log(err);
         throw new Error("Deleting event failed");
-    }
+    });
     return true;
 };
 
 const eventResolvers = {
     Query: {
         event: async (parent, { id }, { models }) =>
-            models.Event.findOne({ _id: id }).populate("ownerId"),
+            models.Event.findOne({ _id: id })
+                .populate("ownerId")
+                .catch((err) => {
+                    console.log(err);
+                    throw new Error("Event not found");
+                }),
     },
 
     Mutation: {

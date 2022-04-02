@@ -5,12 +5,14 @@ export default gql`
         getSlot(input: deleteSlotInput!): Timeslot!
     }
     extend type Mutation {
-        createSlot(input: createSlotInput): Timeslot
         createSlots(input: createSlotsInput!): [Timeslot]
         bookSlot(input: bookSlotInput!): Timeslot!
         unbookSlot(input: bookSlotInput!): Timeslot!
         deleteSlot(input: deleteSlotInput!): Timeslot!
         addPeerId(input: peerCxnInput!): Timeslot!
+    }
+    extend type Subscription {
+        slotUpdated: slotUpdate
     }
 
     type Timeslot {
@@ -20,6 +22,7 @@ export default gql`
         bookerId: User
         title: String
         peerId: String
+        comment: String
     }
 
     input createSlotInput {
@@ -44,5 +47,9 @@ export default gql`
         eventId: ID!
         slotId: ID!
         peerId: ID!
+    }
+    type slotUpdate {
+        type: String!
+        slot: Timeslot
     }
 `;

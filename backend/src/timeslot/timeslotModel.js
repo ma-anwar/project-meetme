@@ -2,16 +2,17 @@ import { Schema, model } from "mongoose";
 
 export const timeslotSchema = Schema({
     start: {
-        type: Date,
+        type: String,
         required: true,
     },
     end: {
-        type: Date,
+        type: String,
         required: true,
     },
     title: String,
     bookerId: { type: Schema.Types.ObjectId, ref: "User" },
     peerId: String,
+    comment: String,
 });
 
 timeslotSchema.statics.addPeerId = async function (

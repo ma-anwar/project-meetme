@@ -1,4 +1,5 @@
 import { RedisPubSub } from "graphql-redis-subscriptions";
+import { withFilter } from "graphql-subscriptions";
 import getRedisClient from "../utils/redisLoader";
 import { slotCreationRules } from "./timeslotValidators";
 
@@ -9,9 +10,9 @@ const pubsub = new RedisPubSub({
 
 const SLOT_UPDATED = "slot_updated";
 
-const publish = async (type, slot) => {
+const publish = async (eventId, type, slot) => {
     pubsub
-        .publish(SLOT_UPDATED, {
+        .publish(`${SLOT_UPDATED}.${eventId}`, {
             slotUpdated: { type, slot },
         })
         .catch((err) => {
@@ -24,13 +25,21 @@ const createSlots = async (parent, { input }, { models, user }) => {
 
     await models.Event.throwIfNotOwner(eventId, user._id);
 
-    const createdSlots = await models.Timeslot.create(...slots);
+    const createdSlots = await models.Timeslot.createSlots(eventId, slots);
 
-    await models.Event.addSlots(eventId, createdSlots);
+    // @DEPRECATED
+    // await models.Event.addSlots(eventId, createdSlots);
 
-    createdSlots.map((slot) => publish("CREATE", slot));
+    const createdSlotsArray = Array.isArray(createdSlots)
+        ? createdSlots
+        : [createdSlots];
 
-    return createdSlots;
+    const populatedResult = await Promise.all(
+        createdSlotsArray.map((slot) => slot.populate("bookerId"))
+    );
+    populatedResult.map((slot) => publish(eventId, "CREATE", slot));
+
+    return populatedResult;
 };
 
 const bookSlot = async (parent, { input }, { models, user }) => {
@@ -38,6 +47,8 @@ const bookSlot = async (parent, { input }, { models, user }) => {
 
     await models.Event.throwIfOwner(eventId, user._id);
 
+    // @DEPRECATED
+    /*
     const toBeUpdated = await models.Event.bookSlot(
         eventId,
         slotId,
@@ -45,24 +56,34 @@ const bookSlot = async (parent, { input }, { models, user }) => {
         title,
         comment
     );
+    */
 
-    const updatedSlot = await models.Event.getSlot(eventId, slotId);
-    publish("UPDATE", updatedSlot);
+    const bookedSlot = await models.Timeslot.bookSlot(
+        slotId,
+        user._id,
+        title,
+        comment
+    );
 
-    return toBeUpdated;
+    await bookedSlot.populate("bookerId");
+    publish(eventId, "UPDATE", bookedSlot);
+
+    return bookedSlot;
 };
 
 const unbookSlot = async (parent, { input }, { models }) => {
     // TODO: Check that booker is unbooking
     const { eventId, slotId, title = "", comment = "" } = input;
 
-    await models.Event.unbookSlot(eventId, slotId, title, comment);
+    // @DEPRECATED
+    // await models.Event.unbookSlot(eventId, slotId, title, comment);
 
-    const updatedSlot = await models.Event.getSlot(eventId, slotId);
+    const unbookedSlot = await models.Timeslot.unbookSlot(slotId);
+    await unbookedSlot.populate("bookerId");
 
-    publish("UPDATE", updatedSlot);
+    publish(eventId, "UPDATE", unbookedSlot);
 
-    return updatedSlot;
+    return unbookedSlot;
 };
 
 const deleteSlot = async (parent, { input }, { models, user }) => {
@@ -72,33 +93,50 @@ const deleteSlot = async (parent, { input }, { models, user }) => {
     await models.Event.throwIfNotEvent(eventId);
     await models.Event.throwIfNotOwner(eventId, user._id);
 
-    const toDelete = await models.Event.getSlot(eventId, slotId);
+    // @DEPRECATED
+    // const toDelete = await models.Event.getSlot(eventId, slotId);
+    const toDelete = await models.Timeslot.getSlot(slotId);
+    await toDelete.populate("bookerId");
 
-    await models.Event.deleteSlot(eventId, slotId);
-    publish("DELETE", toDelete);
+    await models.Timeslot.deleteSlot(slotId);
+    //
+    // @DEPRECATED
+    // await models.Event.deleteSlot(eventId, slotId);
+    publish(eventId, "DELETE", toDelete);
 
     return toDelete;
 };
 
 const getSlot = async (parent, { input }, { models }) => {
     const { eventId, slotId } = input;
-    const slot = await models.Event.getSlot(eventId, slotId);
+    const slot = await models.Timeslot.getSlot(slotId);
+    await slot.populate("bookerId");
     return slot;
 };
 
 const addPeerId = async (parent, { input }, { models }) => {
     const { eventId, slotId, peerId } = input;
-    await models.Event.addPeerId(eventId, slotId, peerId);
-
-    const updatedSlot = await models.Event.getSlot(eventId, slotId);
-    publish("UPDATE", updatedSlot);
+    // await models.Event.addPeerId(eventId, slotId, peerId);
+    const updatedSlot = await models.Timeslot.addPeerId(slotId, peerId);
+    await updatedSlot.populate("bookerId");
+    publish(eventId, "UPDATE", updatedSlot);
 
     return updatedSlot;
+};
+
+const getSlotsBetween = async (parent, { input }, { models }) => {
+    const { eventId, start, end } = input;
+    const result = await models.Timeslot.getSlotsBetween(eventId, start, end);
+    const populatedResult = await Promise.all(
+        result.map((slot) => slot.populate("bookerId"))
+    );
+    return populatedResult;
 };
 
 const timeslotResolvers = {
     Query: {
         getSlot,
+        getSlotsBetween,
     },
     Mutation: {
         createSlots,
@@ -109,7 +147,13 @@ const timeslotResolvers = {
     },
     Subscription: {
         slotUpdated: {
-            subscribe: (_, args) => pubsub.asyncIterator([SLOT_UPDATED]),
+            subscribe: withFilter(
+                (_, args) =>
+                    pubsub.asyncIterator(`${SLOT_UPDATED}.${args.eventId}`),
+                (payload, variables) =>
+                    variables.start <= payload.slotUpdated.slot.start &&
+                    variables.end >= payload.slotUpdated.slot.end
+            ),
         },
     },
 };

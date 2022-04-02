@@ -50,17 +50,31 @@ const deleteEvent = async (parent, { input }, { models }) => {
     return true;
 };
 
+const getEvent = async (parent, { id }, { models }) => {
+    const event = await models.Event.findOne({ _id: id })
+        .populate("ownerId")
+        .catch((err) => {
+            console.log(err);
+            throw new Error("Event not found");
+        });
+
+    if (!event) {
+        throw new Error("Event not found");
+    }
+    const timeslots = await models.Timeslot.getSlots(id);
+    const slotArray = Array.isArray(timeslots) ? timeslots : [timeslots];
+
+    event.timeslots = await Promise.all(
+        slotArray.map((slot) => slot.populate("bookerId"))
+    );
+
+    return event;
+};
+
 const eventResolvers = {
     Query: {
-        event: async (parent, { id }, { models }) =>
-            models.Event.findOne({ _id: id })
-                .populate("ownerId")
-                .catch((err) => {
-                    console.log(err);
-                    throw new Error("Event not found");
-                }),
+        event: getEvent,
     },
-
     Mutation: {
         createEvent,
         deleteEvent,

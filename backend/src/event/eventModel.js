@@ -58,7 +58,7 @@ eventSchema.statics.throwIfNotEvent = async function (eventId) {
 
 eventSchema.statics.throwIfNotOwner = async function (eventId, userId) {
     return this.findOne({ _id: eventId }).then((event) => {
-        if (!event.ownerId.equals(userId)) {
+        if (!event.ownerId._id.equals(userId)) {
             throw new Error("Required to be an event owner for this operation");
         }
     });

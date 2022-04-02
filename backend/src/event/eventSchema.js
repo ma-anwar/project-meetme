@@ -18,8 +18,8 @@ export default gql`
         ownerId: User!
         startDate: String!
         endDate: String!
-        timeslotLength: Int!
         timeslots: [Timeslot]
+        timeslotLength: Int!
         invitees: [User]
         limited: Boolean
     }

@@ -3,37 +3,48 @@ import React, { useEffect, useState } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import OwnerCalendar from './OwnerCalendar';
 import BookerCalendar from './BookerCalendar';
-import { GET_EVENT, GET_TIMESLOTS } from '../../graphql/queries';
+import {
+  GET_EVENT,
+  GET_TIMESLOTS,
+  GET_TIMESLOTS_IN_RANGE,
+} from '../../graphql/queries';
 import { useQuery } from '@apollo/client';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import fromUnixTime from 'date-fns/fromUnixTime';
 
-export default function EventCalendar() {
-  const { id: eventId } = useParams();
-  const navigate = useNavigate();
-
-  const { data, error } = useQuery(GET_EVENT, {
-    variables: { id: eventId },
+export default function EventCalendar({
+  ownerId,
+  title,
+  description,
+  timeslotLength,
+  eventId,
+  startDate,
+  endDate,
+}) {
+  const [dateRange, setDateRange] = useState({
+    start: startDate,
+    end: endDate,
   });
 
   const {
     data: dataTS,
     error: errorTS,
     refetch: refetchTS,
-  } = useQuery(GET_TIMESLOTS, {
-    variables: { id: eventId },
+  } = useQuery(GET_TIMESLOTS_IN_RANGE, {
+    variables: {
+      input: { eventId, start: dateRange.start, end: dateRange.end },
+    },
   });
 
   const { userProfile } = useAuth();
-  let isOwner = data?.event?.ownerId?._id === userProfile._id;
+  let isOwner = ownerId?._id === userProfile._id;
 
   const [allAvailableAppts, setAvailableAppts] = useState([]);
-  const [showError, setShowError] = useState(false);
 
   useEffect(() => {
     if (dataTS) {
-      const formattedDates = dataTS?.event?.timeslots.map((slot) => ({
+      const formattedDates = dataTS?.getSlotsBetween?.map((slot) => ({
         start: fromUnixTime(slot.start),
         end: fromUnixTime(slot.end),
         title: slot.title,
@@ -57,57 +68,47 @@ export default function EventCalendar() {
         }
         setAvailableAppts(newFormattedDates || []);
       }
-    } else if (errorTS) {
-      setShowError(true);
-      setTimeout(() => {
-        navigate('/profile/');
-      }, 6000);
     }
     const interval = setInterval(() => {
       refetchTS();
     }, 3000);
     return () => clearInterval(interval);
-  }, [error, data, isOwner, userProfile._id, errorTS, dataTS, refetchTS]);
+  }, [isOwner, userProfile._id, errorTS, dataTS, refetchTS]);
 
   const eventUrl = window.location.href;
 
   return (
     <React.Fragment>
       <Box display="flex" flexDirection="column" alignItems="center" m={1}>
-        <Typography variant="h4">{data?.event.title}</Typography>
-        {isOwner && !showError ? (
+        <Typography variant="h4">{title}</Typography>
+        {isOwner ? (
           <Box>
             <Typography>
               Share Link: <Link href={eventUrl}>{eventUrl}</Link>
             </Typography>
-            <Typography>{data?.event.description}</Typography>
+            <Typography>{description}</Typography>
           </Box>
         ) : (
-          <Typography>{data?.event.description}</Typography>
+          <Typography>{description}</Typography>
         )}
       </Box>
-      {isOwner && !showError ? (
+      {isOwner ? (
         <OwnerCalendar
           slots={allAvailableAppts}
           setSlots={setAvailableAppts}
           eventId={eventId}
-          timeslotLength={data?.event?.timeslotLength}
+          timeslotLength={timeslotLength}
           isOwner={isOwner}
         />
       ) : null}
-      {!isOwner && !showError ? (
+      {!isOwner ? (
         <BookerCalendar
           slots={allAvailableAppts}
           setSlots={setAvailableAppts}
           eventId={eventId}
-          timeslotLength={data?.event?.timeslotLength}
+          timeslotLength={timeslotLength}
           isOwner={isOwner}
         />
-      ) : null}
-      {showError ? (
-        <Typography align="center" style={{ color: 'red' }}>
-          This calendar does not exist. Redirecting...
-        </Typography>
       ) : null}
     </React.Fragment>
   );

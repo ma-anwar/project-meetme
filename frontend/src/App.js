@@ -5,7 +5,7 @@ import SignupForm from './components/Account/Signup';
 import NavBar from './components/NavBar/NavBar';
 import Profile from './components/Profile/Profile';
 import CreateEvent from './components/CreateEvent/CreateEvent';
-import EventCalendar from './components/EventCalendar/EventCalendar';
+import EventCalWrapper from './components/EventCalendar/EventCalWrapper';
 import VideoCall from './components/EventCalendar/VideoCall';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
@@ -17,6 +17,7 @@ function App() {
   if (!authReady) {
     return (
       <Box display="flex" alignItems="center" justifyContent="center">
+        {' '}
         <CircularProgress />
       </Box>
     );
@@ -50,7 +51,7 @@ function App() {
             path="/cal/:id"
             element={
               <ProtectedRoute>
-                <EventCalendar />
+                <EventCalWrapper />
               </ProtectedRoute>
             }
           />

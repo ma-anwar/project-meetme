@@ -19,7 +19,6 @@ const GET_EVENT = gql`
       startDate
       endDate
       timeslotLength
-      location
       ownerId {
         email
         _id
@@ -90,4 +89,28 @@ const GET_TIMESLOTS = gql`
   }
 `;
 
-export { GET_ME, GET_EVENT, GET_EVENTS, GET_TIMESLOT, GET_TIMESLOTS };
+const GET_TIMESLOTS_IN_RANGE = gql`
+  query getSlotsBetween($input: getSlotsInput!) {
+    getSlotsBetween(input: $input) {
+      _id
+      start
+      end
+      title
+      comment
+      bookerId {
+        _id
+        username
+      }
+      peerId
+    }
+  }
+`;
+
+export {
+  GET_ME,
+  GET_EVENT,
+  GET_EVENTS,
+  GET_TIMESLOT,
+  GET_TIMESLOTS,
+  GET_TIMESLOTS_IN_RANGE,
+};

@@ -1,0 +1,29 @@
+{
+    "name": "peerserver",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon --delay 5 --exec node src/index.js",
+        "build": "node src/index.js",
+        "start": "node src/index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "eslint": "^8.10.0",
+        "nodemon": "^2.0.15",
+        "prettier": "2.5.1"
+    },
+    "dependencies": {
+        "connect-redis": "^6.1.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.0",
+        "express": "^4.17.3",
+        "express-session": "^1.17.2",
+        "http-status": "^1.5.0",
+        "ioredis": "^4.28.5",
+        "peer": "^0.6.1"
+    }
+}

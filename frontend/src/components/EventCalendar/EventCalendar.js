@@ -59,17 +59,14 @@ export default function EventCalendar() {
         }
         setAvailableAppts(newFormattedDates || []);
       }
+    } else if (errorTS) {
+      setShowError(true);
+      setTimeout(() => {
+        navigate('/profile/');
+      }, 6000);
     }
-    //UNCOMMENT this to be when errorTS is returned
-    // else {
-    //   setShowError(true);
-    //   setTimeout(() => {
-    //     navigate('/profile/');
-    //   }, 8000);
-    // }
     const interval = setInterval(() => {
       refetchTS();
-      console.log('bruh im refetching!!!');
     }, 3000);
     return () => clearInterval(interval);
   }, [error, data, isOwner, userProfile._id, errorTS, dataTS, refetchTS]);
@@ -85,10 +82,10 @@ export default function EventCalendar() {
             <Typography>
               Share Link: <Link href={eventUrl}>{eventUrl}</Link>
             </Typography>
-            <Typography>Description: {data?.event.description}</Typography>
+            <Typography>{data?.event.description}</Typography>
           </Box>
         ) : (
-          <Typography>Description: {data?.event.description}</Typography>
+          <Typography>{data?.event.description}</Typography>
         )}
       </Box>
       {isOwner && !showError ? (

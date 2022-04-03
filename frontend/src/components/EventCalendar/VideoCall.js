@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { GET_TIMESLOTS } from '../../graphql/queries';
+import { GET_TIMESLOT, GET_EVENT } from '../../graphql/queries';
 import { START_PEER_CXN } from '../../graphql/mutations';
 import { useQuery, useMutation } from '@apollo/client';
 import Peer from 'peerjs';
@@ -22,30 +22,59 @@ export default function VideoCall() {
 
   const { userProfile } = useAuth();
 
+  const callEnded = 'Call Ended';
+
   let isOwner = state?.ownIt;
 
-  //NEED QUERY TO GET 'SINGLE' timeslot based on id from param
-  //   const {
-  //     data: dataTS,
-  //     error: errorTS,
-  //     refetch: refetchTS,
-  //   } = useQuery(GET_TIMESLOT, {
-  //     variables: { id: eventId, tsId: tsId },
-  //   });
-
-  const { data: dataTS } = useQuery(GET_TIMESLOTS, {
-    variables: { id: eventId },
+  const { data: dataSingle, refetch: refetchSingle } = useQuery(GET_TIMESLOT, {
+    variables: { input: { eventId, slotId: tsId } },
   });
 
-  const [addPeerId] = useMutation(START_PEER_CXN, {
-    refetchQueries: [GET_TIMESLOTS],
-  });
+  const [addPeerId] = useMutation(START_PEER_CXN);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetchSingle();
+    }, 3000);
+    return () => {
+      clearInterval(interval);
+      const peerCxn = {
+        eventId: eventId,
+        slotId: tsId,
+        peerId: callEnded,
+      };
+
+      addPeerId({
+        variables: { input: peerCxn },
+      });
+    };
+  }, [refetchSingle]);
+
+  console.log('THE SINGLE DATA');
+  console.log(dataSingle);
+
+  useEffect(() => {
+    console.log('IN USE EFFECT SINGLE DATA');
+    console.log(dataSingle);
+    console.log(dataSingle?.getSlot.peerId);
+    console.log('SHOULDA');
+    console.log(dataSingle);
+    if (dataSingle && dataSingle.getSlot.peerId === callEnded) {
+      setInCall(false);
+      if (currentUserVideoRef.current)
+        currentUserVideoRef.current.srcObject = null;
+      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+      if (peerInstance.current) peerInstance.current.disconnect();
+      console.log('ENDED too');
+    }
+  }, [dataSingle]);
 
   useEffect(() => {
     const peer = new Peer({
       host: 'meetme-peers.herokuapp.com',
       port: 80,
       debug: 4,
+      //REMOVE DEBUG FOR PRODUCTION
     });
 
     peer.on('open', (id) => {
@@ -83,22 +112,6 @@ export default function VideoCall() {
           remoteVideoRef.current.play();
         });
       });
-
-      call.on('disconnected', () => {
-        setInCall(false);
-        console.log('call was disconnected');
-        currentUserVideoRef.current.srcObject = null;
-        remoteVideoRef.current.srcObject = null;
-        peer.disconnect();
-      });
-
-      call.on('close', () => {
-        setInCall(false);
-        console.log('call was ended');
-        currentUserVideoRef.current.srcObject = null;
-        remoteVideoRef.current.srcObject = null;
-        peer.disconnect();
-      });
     });
 
     peerInstance.current = peer;
@@ -106,14 +119,9 @@ export default function VideoCall() {
 
   const call = () => {
     let bJoin = false;
-    if (dataTS) {
-      let tslots = dataTS?.event?.timeslots;
-      for (let i = 0; i < tslots.length; i++) {
-        if (tslots[i]._id === tsId) {
-          setBookerJoined(!(tslots[i].peerId === null));
-          bJoin = !(tslots[i].peerId === null);
-        }
-      }
+    if (dataSingle) {
+      setBookerJoined(!(dataSingle.getSlot.peerId === null));
+      bJoin = !(dataSingle.getSlot.peerId === null);
     }
     if (bJoin) {
       setBeforeCall(false);
@@ -122,19 +130,9 @@ export default function VideoCall() {
       console.log('SETTING 3, getting REMOTE user media on call with rem ');
       let remPeerId = null;
       console.log('I am owner');
-      if (dataTS) {
-        console.log('DATAts');
-        let tslots = dataTS?.event?.timeslots;
-        console.log(dataTS);
-        console.log(tslots.length);
-        for (let i = 0; i < tslots.length; i++) {
-          if (tslots[i]._id === tsId) {
-            console.log('TSLOT');
-            console.log(tslots[i]);
-            remPeerId = tslots[i].peerId;
-            console.log('SET REM ID ' + remPeerId);
-          }
-        }
+      if (dataSingle) {
+        remPeerId = dataSingle.getSlot.peerId;
+        console.log('SET REM ID ' + remPeerId);
       }
 
       var getUserMedia =
@@ -165,6 +163,16 @@ export default function VideoCall() {
   };
 
   const endCall = () => {
+    const peerCxn = {
+      eventId: eventId,
+      slotId: tsId,
+      peerId: callEnded,
+    };
+
+    addPeerId({
+      variables: { input: peerCxn },
+    });
+
     setInCall(false);
     currentUserVideoRef.current.srcObject = null;
     remoteVideoRef.current.srcObject = null;

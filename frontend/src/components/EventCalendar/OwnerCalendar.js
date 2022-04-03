@@ -11,7 +11,7 @@ import format from 'date-fns/format';
 import { add, getUnixTime, isBefore } from 'date-fns';
 import { CREATE_SLOTS, DELETE_SLOT } from '../../graphql/mutations';
 import { GET_EVENT } from '../../graphql/queries';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
 export default function OwnerCalendar({
   slots,
@@ -26,11 +26,13 @@ export default function OwnerCalendar({
   const [deleteSlot] = useMutation(DELETE_SLOT, {
     refetchQueries: [GET_EVENT],
   });
+
   const [seeSlot, setSeeSlot] = useState(false);
   const [seeSlotInfo, setSeeSlotInfo] = useState(false);
   const [slotInfo, setSlotInfo] = useState({});
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [tooEarly, setTooEarly] = useState(false);
+  const [bookerJoined, setBookerJoined] = useState(false);
   const navigate = useNavigate();
 
   const handleSelect = ({ start, end }) => {
@@ -72,14 +74,18 @@ export default function OwnerCalendar({
         who: bookerId._id,
         when: startWhen + ' - ' + endWhen,
         cmnts: '',
-        peerIn: peerInfo ? peerInfo : '',
+        peerIn: peerInfo ? peerInfo : null,
       };
+      setBookerJoined(peerInfo != null);
+      console.log('EH BUT');
+      console.log(peerInfo);
       setSlotInfo(slInfo);
       setSeeSlotInfo(true);
       setSeeSlot(false);
     } else {
       setSeeSlot(true);
       setSeeSlotInfo(false);
+      setBookerJoined(false);
     }
   };
 
@@ -87,6 +93,7 @@ export default function OwnerCalendar({
     setSelectedSlot(null);
     setSlotInfo({});
     setSeeSlotInfo(false);
+    setBookerJoined(false);
   };
 
   const handleDelete = (e) => {
@@ -189,6 +196,10 @@ export default function OwnerCalendar({
           >
             Close
           </Button>
+        </Box>
+      ) : null}
+      {seeSlotInfo && bookerJoined ? (
+        <Box display="flex" flexDirection="column">
           <Button
             sx={sx(base)}
             type="button"
@@ -199,7 +210,7 @@ export default function OwnerCalendar({
               })
             }
           >
-            Start Call
+            Join Room
           </Button>
         </Box>
       ) : null}

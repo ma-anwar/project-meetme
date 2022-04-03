@@ -52,6 +52,21 @@ const GET_EVENTS = gql`
   }
 `;
 
+const GET_TIMESLOT = gql`
+  query getSlot($input: deleteSlotInput!) {
+    getSlot(input: $input) {
+      _id
+      start
+      end
+      title
+      bookerId {
+        _id
+      }
+      peerId
+    }
+  }
+`;
+
 const GET_TIMESLOTS = gql`
   query event($id: String!) {
     event(id: $id) {
@@ -69,4 +84,4 @@ const GET_TIMESLOTS = gql`
   }
 `;
 
-export { GET_ME, GET_EVENT, GET_EVENTS, GET_TIMESLOTS };
+export { GET_ME, GET_EVENT, GET_EVENTS, GET_TIMESLOT, GET_TIMESLOTS };

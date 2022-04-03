@@ -45,8 +45,6 @@ export default function EventCalendar() {
 
       if (isOwner) {
         setAvailableAppts(formattedDates || []);
-        console.log('LOOK HERE');
-        console.log(formattedDates);
       } else {
         const newFormattedDates = [];
         for (let i = 0; i < formattedDates.length; i++) {

@@ -46,8 +46,6 @@ export default function BookerCalendar({
       title: 'Booked-' + userProfile.username,
       comment: e.target.appt_cmnts.textContent,
     };
-    console.log('THE COMMENT');
-    console.log(e.target.appt_cmnts.textContent);
 
     bookSlot({
       variables: { input: bookedSlot },
@@ -58,21 +56,18 @@ export default function BookerCalendar({
     setBook(false);
   };
 
-  const bookAppt = ({ start, end, _id, bookerId, title, comment }) => {
+  const bookAppt = ({ start, end, _id, bookerId, comment }) => {
     const today = new Date();
     if (isBefore(start, today)) {
       setShowError(true);
       setBook(false);
       setUnBook(false);
     } else {
-      console.log('MY TITLE' + title);
       setShowError(false);
       const startWhen = format(start, 'E MMM dd yyyy, HH:mm');
       const endWhen = format(end, 'E MMM dd yyyy, HH:mm');
       setSelectedSlot(_id);
       setWhen(startWhen + ' - ' + endWhen);
-      console.log('BUT THE ?');
-      console.log(comment);
       setCmnt(comment);
       if (bookerId && bookerId._id === userProfile._id) {
         setUnBook(true);

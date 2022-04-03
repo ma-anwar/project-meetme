@@ -17,8 +17,6 @@ export default function VideoCall() {
   const peerInstance = useRef(null);
   const [beforeCall, setBeforeCall] = useState(true);
   const [inCall, setInCall] = useState(false);
-  const [beginDisabled, setBeginDisabled] = useState(false);
-  const [bookerJoined, setBookerJoined] = useState(false);
 
   const { userProfile } = useAuth();
 
@@ -48,39 +46,43 @@ export default function VideoCall() {
         variables: { input: peerCxn },
       });
     };
-  }, [refetchSingle]);
-
-  console.log('THE SINGLE DATA');
-  console.log(dataSingle);
+  }, [refetchSingle, addPeerId, eventId, tsId]);
 
   useEffect(() => {
-    console.log('IN USE EFFECT SINGLE DATA');
-    console.log(dataSingle);
-    console.log(dataSingle?.getSlot.peerId);
-    console.log('SHOULDA');
-    console.log(dataSingle);
     if (dataSingle && dataSingle.getSlot.peerId === callEnded) {
       setInCall(false);
       if (currentUserVideoRef.current)
         currentUserVideoRef.current.srcObject = null;
       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
-      if (peerInstance.current) peerInstance.current.disconnect();
-      console.log('ENDED too');
+      peerInstance.current = null;
+      if (!beforeCall) {
+        setTimeout(() => {
+          navigate(`/cal/${eventId}`);
+        }, 1000);
+      }
     }
-  }, [dataSingle]);
+
+    if (
+      dataSingle &&
+      isOwner &&
+      beforeCall &&
+      peerInstance &&
+      peerInstance.current &&
+      peerInstance.current._id
+    ) {
+      call();
+    }
+  }, [dataSingle, peerInstance?.current?._id]);
 
   useEffect(() => {
     const peer = new Peer({
-      host: 'meetme-peers.herokuapp.com',
-      port: 80,
-      debug: 4,
-      //REMOVE DEBUG FOR PRODUCTION
+      host: 'manwar.dev',
+      port: 443,
+      path: '/peerjs/meetme',
     });
 
     peer.on('open', (id) => {
-      console.log('SETTING 1, setting peer id on open with id ' + id);
       if (isOwner === false) {
-        console.log(' I am NOT the owner, so add id to ts' + isOwner);
         const peerCxn = {
           eventId: eventId,
           slotId: tsId,
@@ -96,14 +98,12 @@ export default function VideoCall() {
     peer.on('call', (call) => {
       setInCall(true);
       setBeforeCall(false);
-      console.log('SETTING 2, getting user media on call');
       var getUserMedia =
         navigator.getUserMedia ||
         navigator.webkitGetUserMedia ||
         navigator.mozGetUserMedia;
 
       getUserMedia({ video: true, audio: true }, (mediaStream) => {
-        console.log('emitted when remote tries to call u!');
         currentUserVideoRef.current.srcObject = mediaStream;
         currentUserVideoRef.current.play();
         call.answer(mediaStream);
@@ -115,24 +115,19 @@ export default function VideoCall() {
     });
 
     peerInstance.current = peer;
-  }, [isOwner, userProfile._id]);
+  }, [isOwner, userProfile._id, eventId, tsId]);
 
   const call = () => {
     let bJoin = false;
     if (dataSingle) {
-      setBookerJoined(!(dataSingle.getSlot.peerId === null));
       bJoin = !(dataSingle.getSlot.peerId === null);
     }
     if (bJoin) {
       setBeforeCall(false);
       setInCall(true);
-      setBeginDisabled(true);
-      console.log('SETTING 3, getting REMOTE user media on call with rem ');
       let remPeerId = null;
-      console.log('I am owner');
       if (dataSingle) {
         remPeerId = dataSingle.getSlot.peerId;
-        console.log('SET REM ID ' + remPeerId);
       }
 
       var getUserMedia =
@@ -143,26 +138,20 @@ export default function VideoCall() {
       getUserMedia({ video: true, audio: true }, (mediaStream) => {
         currentUserVideoRef.current.srcObject = mediaStream;
         currentUserVideoRef.current.play();
-        console.log('I am calling remote id ' + remPeerId);
 
         const call = peerInstance.current.call(remPeerId, mediaStream);
 
         call.on('stream', (remoteStream) => {
-          console.log('remote streeam');
           remoteVideoRef.current.srcObject = remoteStream;
           remoteVideoRef.current.play();
         });
-
-        call.on('close', () => {
-          console.log('CLOSE IT');
-        });
       });
-    } else {
-      console.log('SORRY, please wait for participant');
     }
   };
 
   const endCall = () => {
+    setInCall(false);
+
     const peerCxn = {
       eventId: eventId,
       slotId: tsId,
@@ -173,31 +162,19 @@ export default function VideoCall() {
       variables: { input: peerCxn },
     });
 
-    setInCall(false);
     currentUserVideoRef.current.srcObject = null;
     remoteVideoRef.current.srcObject = null;
-    peerInstance.current.disconnect();
-    console.log('ENDED');
+    peerInstance.current = null;
+    setTimeout(() => {
+      navigate(`/cal/${eventId}`);
+    }, 1000);
   };
 
   return (
     <React.Fragment>
       {beforeCall && isOwner ? (
         <Box display="flex" flexDirection="row" justifyContent="center" m={2}>
-          <Button
-            variant="outlined"
-            disabled={beginDisabled}
-            onClick={() => call()}
-          >
-            Begin Call
-          </Button>
-        </Box>
-      ) : null}
-      {beforeCall && isOwner && !bookerJoined ? (
-        <Box display="flex" alignItems="center" justifyContent="center" m={2}>
-          <Typography>
-            Please wait for participant to join the meeting.
-          </Typography>
+          <Typography>Connecting ...</Typography>
         </Box>
       ) : null}
       {beforeCall && !isOwner ? (
@@ -232,12 +209,9 @@ export default function VideoCall() {
           alignItems="center"
           m={1}
         >
-          <Typography style={{ color: 'red' }}>The call was ended</Typography>
-
-          <Typography>Click here to go back to your profile </Typography>
-          <Button variant="contained" onClick={() => navigate('/profile')}>
-            Profile
-          </Button>
+          <Typography style={{ color: 'red' }}>
+            The call was ended. Redirecting...
+          </Typography>
         </Box>
       ) : null}
     </React.Fragment>

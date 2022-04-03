@@ -72,10 +72,10 @@ export default function OwnerCalendar({
         _id: _id,
         who: bookerId._id,
         when: startWhen + ' - ' + endWhen,
-        cmnts: comment,
+        cmnts: comment ? comment : '',
         peerIn: peerId ? peerId : null,
       };
-      setBookerJoined(peerId != null);
+      setBookerJoined(peerId != null && peerId !== callEnded);
       setSlotInfo(slInfo);
       setSeeSlotInfo(true);
       setSeeSlot(false);
@@ -88,10 +88,10 @@ export default function OwnerCalendar({
 
   const eventPropGetter = (event) => {
     let backgroundColor = '';
-    if (event.peerId == null || event.peerId == callEnded) {
-      backgroundColor = '';
-    } else {
+    if (event.peerId && event.peerId !== callEnded) {
       backgroundColor = 'green';
+    } else {
+      backgroundColor = '';
     }
     return { style: { backgroundColor } };
   };

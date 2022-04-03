@@ -215,7 +215,7 @@ export default function VideoCall() {
           <Box display="flex" flexDirection="row" justifyContent="center">
             <Box m={1}>
               <Typography>Your video</Typography>
-              <video ref={currentUserVideoRef} />
+              <video ref={currentUserVideoRef} muted="muted" />
             </Box>
             <Box m={1}>
               <Typography>Other Participant Video</Typography>

@@ -11,7 +11,6 @@ import { Box, TextField, Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { BOOK_SLOT, UNBOOK_SLOT } from '../../graphql/mutations';
-import { GET_EVENT } from '../../graphql/queries';
 import { useMutation } from '@apollo/client';
 import { useSubscribeToMore } from '../../hooks/useSubscribeToMore';
 

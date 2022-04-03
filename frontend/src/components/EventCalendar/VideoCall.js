@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { GET_TIMESLOT, GET_EVENT } from '../../graphql/queries';
+import { GET_TIMESLOT } from '../../graphql/queries';
 import { START_PEER_CXN } from '../../graphql/mutations';
 import { useQuery, useMutation } from '@apollo/client';
 import Peer from 'peerjs';

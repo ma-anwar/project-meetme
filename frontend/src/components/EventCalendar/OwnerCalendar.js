@@ -27,6 +27,7 @@ export default function OwnerCalendar({
     refetchQueries: [GET_EVENT],
   });
 
+  const callEnded = 'Call Ended';
   const [seeSlot, setSeeSlot] = useState(false);
   const [seeSlotInfo, setSeeSlotInfo] = useState(false);
   const [slotInfo, setSlotInfo] = useState({});
@@ -63,7 +64,7 @@ export default function OwnerCalendar({
     }
   };
 
-  const viewSlot = ({ start, end, _id, bookerId, peerInfo }) => {
+  const viewSlot = ({ start, end, _id, bookerId, peerId }) => {
     setSelectedSlot(_id);
     console.log('THE TS ID ' + selectedSlot);
     if (bookerId) {
@@ -74,11 +75,11 @@ export default function OwnerCalendar({
         who: bookerId._id,
         when: startWhen + ' - ' + endWhen,
         cmnts: '',
-        peerIn: peerInfo ? peerInfo : null,
+        peerIn: peerId ? peerId : null,
       };
-      setBookerJoined(peerInfo != null);
+      setBookerJoined(peerId != null);
       console.log('EH BUT');
-      console.log(peerInfo);
+      console.log(peerId);
       setSlotInfo(slInfo);
       setSeeSlotInfo(true);
       setSeeSlot(false);
@@ -87,6 +88,16 @@ export default function OwnerCalendar({
       setSeeSlotInfo(false);
       setBookerJoined(false);
     }
+  };
+
+  const eventPropGetter = (event) => {
+    let backgroundColor = '';
+    if (event.peerId == null || event.peerId == callEnded) {
+      backgroundColor = '';
+    } else {
+      backgroundColor = 'green';
+    }
+    return { style: { backgroundColor } };
   };
 
   const handleClose = (e) => {
@@ -140,6 +151,7 @@ export default function OwnerCalendar({
         selectable
         onSelectSlot={handleSelect}
         onSelectEvent={viewSlot}
+        eventPropGetter={eventPropGetter}
       />
       {tooEarly ? (
         <Typography align="center" style={{ color: 'red' }}>

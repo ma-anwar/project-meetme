@@ -44,6 +44,8 @@ export default function EventCalendar() {
 
       if (isOwner) {
         setAvailableAppts(formattedDates || []);
+        console.log('LOOK HERE');
+        console.log(formattedDates);
       } else {
         const newFormattedDates = [];
         for (let i = 0; i < formattedDates.length; i++) {
@@ -66,6 +68,7 @@ export default function EventCalendar() {
     // }
     const interval = setInterval(() => {
       refetchTS();
+      console.log('bruh im refetching!!!');
     }, 3000);
     return () => clearInterval(interval);
   }, [error, data, isOwner, userProfile._id, errorTS, dataTS, refetchTS]);

@@ -19,6 +19,7 @@ export default function OwnerCalendar({
   timeslotLength,
   isOwner,
   subToUpdates,
+  defaultDate,
 }) {
   useSubscribeToMore(subToUpdates);
 
@@ -140,6 +141,7 @@ export default function OwnerCalendar({
         startAccessor="start"
         endAccessor="end"
         defaultView={Views.WEEK}
+        defaultDate={defaultDate}
         views={['week', 'day']}
         style={{ height: 500 }}
         step={timeslotLength}

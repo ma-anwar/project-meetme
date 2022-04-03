@@ -45,8 +45,9 @@ export default function EventCalendar({
 
   const { userProfile } = useAuth();
   const isOwner = ownerId?._id === userProfile._id;
-
+  const eventUrl = window.location.href;
   const [allAvailableAppts, setAvailableAppts] = useState([]);
+  const defaultDate = fromUnixTime(dateRange.start);
 
   useEffect(() => {
     if (dataTS) {
@@ -77,8 +78,6 @@ export default function EventCalendar({
     }
   }, [isOwner, userProfile._id, errorTS, dataTS, refetchTS]);
 
-  const eventUrl = window.location.href;
-
   return (
     <React.Fragment>
       <Box display="flex" flexDirection="column" alignItems="center" m={1}>
@@ -101,6 +100,7 @@ export default function EventCalendar({
           timeslotLength={timeslotLength}
           isOwner={isOwner}
           subToUpdates={subscribeToSlotUpdates}
+          defaultDate={defaultDate}
         />
       ) : null}
       {!isOwner ? (
@@ -110,6 +110,7 @@ export default function EventCalendar({
           timeslotLength={timeslotLength}
           isOwner={isOwner}
           subToUpdates={subscribeToSlotUpdates}
+          defaultDate={defaultDate}
         />
       ) : null}
     </React.Fragment>

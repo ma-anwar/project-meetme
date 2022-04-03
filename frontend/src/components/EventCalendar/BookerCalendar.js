@@ -20,6 +20,7 @@ export default function BookerCalendar({
   timeslotLength,
   isOwner,
   subToUpdates,
+  defaultDate,
 }) {
   useSubscribeToMore(subToUpdates);
   const [bookSlot] = useMutation(BOOK_SLOT);
@@ -132,6 +133,7 @@ export default function BookerCalendar({
         startAccessor="start"
         endAccessor="end"
         defaultView={Views.WEEK}
+        defaultDate={defaultDate}
         views={['week', 'day']}
         style={{ height: 500 }}
         step={timeslotLength}

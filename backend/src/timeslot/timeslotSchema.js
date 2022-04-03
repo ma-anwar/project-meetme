@@ -50,6 +50,7 @@ export default gql`
         eventId: ID!
         slotId: ID!
         title: String
+        comment: String
     }
     input deleteSlotInput {
         eventId: ID!

@@ -29,8 +29,10 @@ const GET_EVENT = gql`
         start
         end
         title
+        comment
         bookerId {
           _id
+          username
         }
         peerId
       }
@@ -59,8 +61,10 @@ const GET_TIMESLOT = gql`
       start
       end
       title
+      comment
       bookerId {
         _id
+        username
       }
       peerId
     }
@@ -75,8 +79,10 @@ const GET_TIMESLOTS = gql`
         start
         end
         title
+        comment
         bookerId {
           _id
+          username
         }
         peerId
       }

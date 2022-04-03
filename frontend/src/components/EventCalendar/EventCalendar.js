@@ -38,6 +38,7 @@ export default function EventCalendar() {
         end: fromUnixTime(slot.end),
         title: slot.title,
         _id: slot._id,
+        comment: slot.comment,
         bookerId: slot.bookerId,
         peerId: slot.peerId,
       }));
@@ -80,11 +81,14 @@ export default function EventCalendar() {
       <Box display="flex" flexDirection="column" alignItems="center" m={1}>
         <Typography variant="h4">{data?.event.title}</Typography>
         {isOwner && !showError ? (
-          <Typography>
-            Share Link: <Link href={eventUrl}>{eventUrl}</Link>
-          </Typography>
+          <Box>
+            <Typography>
+              Share Link: <Link href={eventUrl}>{eventUrl}</Link>
+            </Typography>
+            <Typography>Description: {data?.event.description}</Typography>
+          </Box>
         ) : (
-          <Typography>{data?.event.description}</Typography>
+          <Typography>Description: {data?.event.description}</Typography>
         )}
       </Box>
       {isOwner && !showError ? (

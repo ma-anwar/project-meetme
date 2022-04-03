@@ -64,7 +64,7 @@ export default function OwnerCalendar({
     }
   };
 
-  const viewSlot = ({ start, end, _id, bookerId, peerId }) => {
+  const viewSlot = ({ start, end, _id, bookerId, peerId, comment }) => {
     setSelectedSlot(_id);
     console.log('THE TS ID ' + selectedSlot);
     if (bookerId) {
@@ -74,7 +74,7 @@ export default function OwnerCalendar({
         _id: _id,
         who: bookerId._id,
         when: startWhen + ' - ' + endWhen,
-        cmnts: '',
+        cmnts: comment,
         peerIn: peerId ? peerId : null,
       };
       setBookerJoined(peerId != null);

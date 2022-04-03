@@ -3,15 +3,12 @@ import React, { useEffect, useState } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import OwnerCalendar from './OwnerCalendar';
 import BookerCalendar from './BookerCalendar';
-import {
-  GET_EVENT,
-  GET_TIMESLOTS,
-  GET_TIMESLOTS_IN_RANGE,
-} from '../../graphql/queries';
+import { GET_TIMESLOTS_IN_RANGE } from '../../graphql/queries';
+import { GET_SLOT_UPDATES } from '../../graphql/subscriptions';
 import { useQuery } from '@apollo/client';
-import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import fromUnixTime from 'date-fns/fromUnixTime';
+import { handleSubUpdate } from './CalendarUtils';
 
 export default function EventCalendar({
   ownerId,
@@ -28,6 +25,7 @@ export default function EventCalendar({
   });
 
   const {
+    subscribeToMore,
     data: dataTS,
     error: errorTS,
     refetch: refetchTS,
@@ -37,8 +35,16 @@ export default function EventCalendar({
     },
   });
 
+  const subscribeToSlotUpdates = () => {
+    subscribeToMore({
+      document: GET_SLOT_UPDATES,
+      variables: { eventId, start: dateRange.start, end: dateRange.end },
+      updateQuery: handleSubUpdate,
+    });
+  };
+
   const { userProfile } = useAuth();
-  let isOwner = ownerId?._id === userProfile._id;
+  const isOwner = ownerId?._id === userProfile._id;
 
   const [allAvailableAppts, setAvailableAppts] = useState([]);
 
@@ -69,10 +75,6 @@ export default function EventCalendar({
         setAvailableAppts(newFormattedDates || []);
       }
     }
-    const interval = setInterval(() => {
-      refetchTS();
-    }, 3000);
-    return () => clearInterval(interval);
   }, [isOwner, userProfile._id, errorTS, dataTS, refetchTS]);
 
   const eventUrl = window.location.href;
@@ -95,19 +97,19 @@ export default function EventCalendar({
       {isOwner ? (
         <OwnerCalendar
           slots={allAvailableAppts}
-          setSlots={setAvailableAppts}
           eventId={eventId}
           timeslotLength={timeslotLength}
           isOwner={isOwner}
+          subToUpdates={subscribeToSlotUpdates}
         />
       ) : null}
       {!isOwner ? (
         <BookerCalendar
           slots={allAvailableAppts}
-          setSlots={setAvailableAppts}
           eventId={eventId}
           timeslotLength={timeslotLength}
           isOwner={isOwner}
+          subToUpdates={subscribeToSlotUpdates}
         />
       ) : null}
     </React.Fragment>

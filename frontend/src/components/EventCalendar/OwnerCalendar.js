@@ -11,18 +11,19 @@ import format from 'date-fns/format';
 import { add, getUnixTime, isBefore } from 'date-fns';
 import { CREATE_SLOTS, DELETE_SLOT } from '../../graphql/mutations';
 import { GET_EVENT } from '../../graphql/queries';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+import { useSubscribeToMore } from '../../hooks/useSubscribeToMore';
 
 export default function OwnerCalendar({
   slots,
-  setSlots,
   eventId,
   timeslotLength,
   isOwner,
+  subToUpdates,
 }) {
-  const [createSlots] = useMutation(CREATE_SLOTS, {
-    refetchQueries: [GET_EVENT],
-  });
+  useSubscribeToMore(subToUpdates);
+
+  const [createSlots] = useMutation(CREATE_SLOTS);
   const [deleteSlot] = useMutation(DELETE_SLOT, {
     refetchQueries: [GET_EVENT],
   });

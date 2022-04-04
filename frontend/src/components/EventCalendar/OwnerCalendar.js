@@ -20,6 +20,7 @@ export default function OwnerCalendar({
   isOwner,
   subToUpdates,
   defaultDate,
+  onRangeChange,
 }) {
   useSubscribeToMore(subToUpdates);
 
@@ -149,6 +150,7 @@ export default function OwnerCalendar({
         onSelectSlot={handleSelect}
         onSelectEvent={viewSlot}
         eventPropGetter={eventPropGetter}
+        onRangeChange={onRangeChange}
       />
       {tooEarly ? (
         <Typography align="center" style={{ color: 'red' }}>

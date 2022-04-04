@@ -8,5 +8,5 @@ export function useSubscribeToMore(subToUpdates) {
       subToUpdates();
       setSubscribed(true);
     }
-  }, [subscribed, setSubscribed, subToUpdates]);
+  }, [subscribed, subToUpdates]);
 }

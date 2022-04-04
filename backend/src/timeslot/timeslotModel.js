@@ -75,8 +75,8 @@ timeslotSchema.statics.unbookSlot = async function (slotId, title, comment) {
         {
             $set: {
                 bookerId: null,
-                title: 'Empty slot',
-                comment: '',
+                title: "Empty slot",
+                comment: "",
             },
         },
         { new: true }

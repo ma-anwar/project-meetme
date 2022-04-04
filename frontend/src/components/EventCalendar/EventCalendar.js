@@ -7,8 +7,14 @@ import { GET_TIMESLOTS_IN_RANGE } from '../../graphql/queries';
 import { GET_SLOT_UPDATES } from '../../graphql/subscriptions';
 import { useQuery } from '@apollo/client';
 import { useAuth } from '../../hooks/useAuth';
-import fromUnixTime from 'date-fns/fromUnixTime';
-import { handleSubUpdate } from './CalendarUtils';
+import {
+  fromUnixTime,
+  getUnixTime,
+  startOfDay,
+  endOfDay,
+  endOfWeek,
+} from 'date-fns';
+import { handleSubUpdate, applyToEpoch } from './CalendarUtils';
 
 export default function EventCalendar({
   ownerId,
@@ -20,8 +26,8 @@ export default function EventCalendar({
   endDate,
 }) {
   const [dateRange, setDateRange] = useState({
-    start: startDate,
-    end: endDate,
+    start: applyToEpoch(startOfDay, startDate),
+    end: applyToEpoch(endOfWeek, startDate),
   });
 
   const {
@@ -33,14 +39,33 @@ export default function EventCalendar({
     variables: {
       input: { eventId, start: dateRange.start, end: dateRange.end },
     },
+    fetchPolicy: 'network-only',
   });
 
   const subscribeToSlotUpdates = () => {
-    subscribeToMore({
+    return subscribeToMore({
       document: GET_SLOT_UPDATES,
-      variables: { eventId, start: dateRange.start, end: dateRange.end },
+      variables: {
+        eventId,
+        start: applyToEpoch(startOfDay, startDate),
+        end: applyToEpoch(endOfDay, endDate),
+      },
       updateQuery: handleSubUpdate,
     });
+  };
+
+  const onRangeChange = (range) => {
+    if (range.length === 1) {
+      const start = getUnixTime(startOfDay(range[0])).toString();
+      const end = getUnixTime(endOfDay(range[0])).toString();
+      setDateRange({ start, end });
+    }
+
+    if (range.length === 7) {
+      const start = getUnixTime(startOfDay(range[0])).toString();
+      const end = getUnixTime(endOfDay(range[6])).toString();
+      setDateRange({ start, end });
+    }
   };
 
   const { userProfile } = useAuth();
@@ -101,6 +126,8 @@ export default function EventCalendar({
           isOwner={isOwner}
           subToUpdates={subscribeToSlotUpdates}
           defaultDate={defaultDate}
+          onRangeChange={onRangeChange}
+          dateRange={dateRange}
         />
       ) : null}
       {!isOwner ? (
@@ -111,6 +138,8 @@ export default function EventCalendar({
           isOwner={isOwner}
           subToUpdates={subscribeToSlotUpdates}
           defaultDate={defaultDate}
+          onRangeChange={onRangeChange}
+          dateRange={dateRange}
         />
       ) : null}
     </React.Fragment>

@@ -21,6 +21,7 @@ export default function BookerCalendar({
   isOwner,
   subToUpdates,
   defaultDate,
+  onRangeChange,
 }) {
   useSubscribeToMore(subToUpdates);
   const [bookSlot] = useMutation(BOOK_SLOT);
@@ -166,6 +167,7 @@ export default function BookerCalendar({
         step={timeslotLength}
         onSelectEvent={bookAppt}
         eventPropGetter={eventPropGetter}
+        onRangeChange={onRangeChange}
       />
       {showError ? (
         <Typography variant="h6" align="center" p={1}>

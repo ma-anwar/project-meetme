@@ -1,11 +1,9 @@
-/* eslint no-console: ["error", { allow: ["warn"] }] */
-const express = require("express");
 const { ExpressPeerServer } = require("peer");
 const http = require("http");
 const cors = require("cors");
+const { app } = require("./app");
 
 async function startServer(port) {
-    const app = express();
     app.use(cors());
     const httpServer = http.createServer(app);
 

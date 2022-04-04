@@ -39,7 +39,6 @@ export default function EventCalendar({
     variables: {
       input: { eventId, start: dateRange.start, end: dateRange.end },
     },
-    fetchPolicy: 'network-only',
   });
 
   const subscribeToSlotUpdates = () => {

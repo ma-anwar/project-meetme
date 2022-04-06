@@ -8,6 +8,7 @@ import { GET_SLOT_UPDATES } from '../../graphql/subscriptions';
 import { useQuery } from '@apollo/client';
 import { useAuth } from '../../hooks/useAuth';
 import {
+  format,
   fromUnixTime,
   getUnixTime,
   startOfDay,
@@ -101,20 +102,27 @@ export default function EventCalendar({
       }
     }
   }, [isOwner, userProfile._id, errorTS, dataTS, refetchTS]);
+  const formattedStart = format(fromUnixTime(startDate), 'E MMM dd').toString();
+  const formattedEnd = format(fromUnixTime(endDate), 'E MMM dd').toString();
 
   return (
     <React.Fragment>
       <Box display="flex" flexDirection="column" alignItems="center" m={1}>
         <Typography variant="h4">{title}</Typography>
+        <Typography variant="h5">
+          {formattedStart} - {formattedEnd}
+        </Typography>
         {isOwner ? (
-          <Box>
+          <Box display="flex" alignItems="center" flexDirection="column">
             <Typography>
               Share Link: <Link href={eventUrl}>{eventUrl}</Link>
             </Typography>
             <Typography>{description}</Typography>
           </Box>
         ) : (
-          <Typography>{description}</Typography>
+          <Box display="flex" alignItems="center" flexDirection="column">
+            <Typography>{description}</Typography>
+          </Box>
         )}
       </Box>
       {isOwner ? (

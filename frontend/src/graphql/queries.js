@@ -40,15 +40,16 @@ const GET_EVENT = gql`
 `;
 
 const GET_EVENTS = gql`
-  query me {
-    me {
-      eventsOwned {
+  query eventsOwned($email: String!, $page: Int) {
+      eventsOwned(email: $email, page: $page) {
+      events {
         title
         description
         startDate
         endDate
         _id
       }
+      hasMore
     }
   }
 `;

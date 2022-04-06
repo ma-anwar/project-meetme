@@ -1,15 +1,24 @@
 const userResolvers = {
     Query: {
-        me: async (parent, args, { user }) => user,
+        me: (_, args, { user }) => user,
         user: async (parent, { email }, { models }) =>
             models.User.findOne({ email }),
-    },
-
-    User: {
-        eventsOwned: async (parent) => {
-            const owner = parent;
-            await owner.populate("eventsOwned");
-            return owner.eventsOwned;
+        eventsOwned: async (_, { email, page }, { models }) => {
+            const user = await models.User.findOne(
+                { email },
+                { projection: { _id: 1 } }
+            );
+            const events = await models.Event.find({
+                ownerId: user._id,
+            })
+                .sort({ created_at: -1 })
+                .skip(page * 5)
+                .limit(6);
+            const hasMore = events.length === 6;
+            return {
+                events: events.slice(0, 5),
+                hasMore,
+            };
         },
     },
 };

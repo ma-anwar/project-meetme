@@ -4,12 +4,16 @@ export default gql`
     extend type Query {
         me: User!
         user(email: String!): User
+        eventsOwned(email: String!, page: Int): eventsOwnedResult!
     }
 
     type User {
         _id: ID!
         username: String!
         email: String!
-        eventsOwned: [Event!]
+    }
+    type eventsOwnedResult {
+        events: [Event!]
+        hasMore: Boolean
     }
 `;

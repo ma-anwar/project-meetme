@@ -33,18 +33,19 @@ export default function OwnerCalendar({
   const [slotInfo, setSlotInfo] = useState({});
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [tooEarly, setTooEarly] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [bookerJoined, setBookerJoined] = useState(false);
   const navigate = useNavigate();
 
-    useEffect( () => {
-        if (!error) return
-        const errorTimer = setTimeout( () => {setError("")}, 3000) 
-        return () => {
-            clearTimeout(errorTimer)
-        }
-
-    }, [error])
+  useEffect(() => {
+    if (!error) return;
+    const errorTimer = setTimeout(() => {
+      setError('');
+    }, 3000);
+    return () => {
+      clearTimeout(errorTimer);
+    };
+  }, [error]);
 
   const handleSelect = ({ start, end }) => {
     const today = new Date();
@@ -70,8 +71,10 @@ export default function OwnerCalendar({
       }
       createSlots({
         variables: { input: { eventId: eventId, slots: newSlots } },
-      }).catch( () => {
-         setError("Timeslots must be between the start and end date of the event")
+      }).catch(() => {
+        setError(
+          'Timeslots must be between the start and end date of the event'
+        );
       });
     }
   };
@@ -83,7 +86,7 @@ export default function OwnerCalendar({
       const endWhen = format(end, 'E MMM dd yyyy, HH:mm');
       const slInfo = {
         _id: _id,
-        who: bookerId._id,
+        who: bookerId.username,
         when: startWhen + ' - ' + endWhen,
         cmnts: comment ? comment : '',
         peerIn: peerId ? peerId : null,
@@ -167,7 +170,7 @@ export default function OwnerCalendar({
 
       {error ? (
         <Typography align="center" style={{ color: 'red' }}>
-            {error}
+          {error}
         </Typography>
       ) : null}
       {tooEarly ? (

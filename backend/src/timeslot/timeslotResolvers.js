@@ -1,5 +1,6 @@
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { withFilter } from "graphql-subscriptions";
+import { getUnixTime, endOfDay, startOfDay, fromUnixTime } from "date-fns";
 import getRedisClient from "../utils/redisLoader";
 import { slotCreationRules } from "./timeslotValidators";
 
@@ -20,15 +21,34 @@ const publish = async (eventId, type, slot) => {
         });
 };
 
+export const applyToEpoch = (fn, epochTime) => {
+    const mult = getUnixTime(epochTime) * 1000;
+    const date = fromUnixTime(mult);
+    const applied = fn(date);
+    const epoch = getUnixTime(applied);
+    return epoch.toString();
+};
+
 const createSlots = async (parent, { input }, { models, user }) => {
     const { eventId, slots } = input;
 
     await models.Event.throwIfNotOwner(eventId, user._id);
 
-    const createdSlots = await models.Timeslot.createSlots(eventId, slots);
+    const event = await models.Event.findOne({ _id: eventId });
+    const minStart = slots.reduce((prev, curr) =>
+        prev.start < curr.start ? prev : curr
+    );
+    const maxEnd = slots.reduce((prev, curr) =>
+        prev.end > curr.end ? prev : curr
+    );
+    if (
+        minStart.start < applyToEpoch(startOfDay, event.startDate) ||
+        maxEnd.end > applyToEpoch(endOfDay, event.endDate)
+    ) {
+        throw new Error("Slots must be between event start and end date");
+    }
 
-    // @DEPRECATED
-    // await models.Event.addSlots(eventId, createdSlots);
+    const createdSlots = await models.Timeslot.createSlots(eventId, slots);
 
     const createdSlotsArray = Array.isArray(createdSlots)
         ? createdSlots
@@ -47,17 +67,6 @@ const bookSlot = async (parent, { input }, { models, user }) => {
 
     await models.Event.throwIfOwner(eventId, user._id);
 
-    // @DEPRECATED
-    /*
-    const toBeUpdated = await models.Event.bookSlot(
-        eventId,
-        slotId,
-        user._id,
-        title,
-        comment
-    );
-    */
-
     const bookedSlot = await models.Timeslot.bookSlot(
         slotId,
         user._id,
@@ -75,9 +84,6 @@ const unbookSlot = async (parent, { input }, { models }) => {
     // TODO: Check that booker is unbooking
     const { eventId, slotId, title = "", comment = "" } = input;
 
-    // @DEPRECATED
-    // await models.Event.unbookSlot(eventId, slotId, title, comment);
-
     const unbookedSlot = await models.Timeslot.unbookSlot(slotId);
     await unbookedSlot.populate("bookerId");
 
@@ -93,15 +99,10 @@ const deleteSlot = async (parent, { input }, { models, user }) => {
     await models.Event.throwIfNotEvent(eventId);
     await models.Event.throwIfNotOwner(eventId, user._id);
 
-    // @DEPRECATED
-    // const toDelete = await models.Event.getSlot(eventId, slotId);
     const toDelete = await models.Timeslot.getSlot(slotId);
     await toDelete.populate("bookerId");
 
     await models.Timeslot.deleteSlot(slotId);
-    //
-    // @DEPRECATED
-    // await models.Event.deleteSlot(eventId, slotId);
     publish(eventId, "DELETE", toDelete);
 
     return toDelete;
@@ -116,7 +117,6 @@ const getSlot = async (parent, { input }, { models }) => {
 
 const addPeerId = async (parent, { input }, { models }) => {
     const { eventId, slotId, peerId } = input;
-    // await models.Event.addPeerId(eventId, slotId, peerId);
     const updatedSlot = await models.Timeslot.addPeerId(slotId, peerId);
     await updatedSlot.populate("bookerId");
     publish(eventId, "UPDATE", updatedSlot);

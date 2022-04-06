@@ -22,9 +22,9 @@ const location = yup
     .required()
     .min(1, "Location must be at least 1 character long");
 
-const startDate = yup.date().required();
+const startDate = yup.string().required();
 
-const endDate = yup.date().required();
+const endDate = yup.string().required();
 
 export const eventCreationRules = yup.object().shape({
     title,

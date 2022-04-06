@@ -1,6 +1,6 @@
 import { Box, TextField, Button, Typography } from '@mui/material';
 import sx from 'mui-sx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { useNavigate } from 'react-router-dom';
 import parse from 'date-fns/parse';
@@ -33,8 +33,18 @@ export default function OwnerCalendar({
   const [slotInfo, setSlotInfo] = useState({});
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [tooEarly, setTooEarly] = useState(false);
+  const [error, setError] = useState("");
   const [bookerJoined, setBookerJoined] = useState(false);
   const navigate = useNavigate();
+
+    useEffect( () => {
+        if (!error) return
+        const errorTimer = setTimeout( () => {setError("")}, 3000) 
+        return () => {
+            clearTimeout(errorTimer)
+        }
+
+    }, [error])
 
   const handleSelect = ({ start, end }) => {
     const today = new Date();
@@ -60,6 +70,8 @@ export default function OwnerCalendar({
       }
       createSlots({
         variables: { input: { eventId: eventId, slots: newSlots } },
+      }).catch( () => {
+         setError("Timeslots must be between the start and end date of the event")
       });
     }
   };
@@ -152,6 +164,12 @@ export default function OwnerCalendar({
         eventPropGetter={eventPropGetter}
         onRangeChange={onRangeChange}
       />
+
+      {error ? (
+        <Typography align="center" style={{ color: 'red' }}>
+            {error}
+        </Typography>
+      ) : null}
       {tooEarly ? (
         <Typography align="center" style={{ color: 'red' }}>
           Please select a start time in the future.

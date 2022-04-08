@@ -27,7 +27,6 @@ export default function OwnerCalendar({
   const [createSlots] = useMutation(CREATE_SLOTS);
   const [deleteSlot] = useMutation(DELETE_SLOT);
 
-  const callEnded = 'Call Ended';
   const [seeSlot, setSeeSlot] = useState(false);
   const [seeSlotInfo, setSeeSlotInfo] = useState(false);
   const [slotInfo, setSlotInfo] = useState({});
@@ -79,7 +78,15 @@ export default function OwnerCalendar({
     }
   };
 
-  const viewSlot = ({ start, end, _id, bookerId, peerId, comment }) => {
+  const viewSlot = ({
+    start,
+    end,
+    _id,
+    bookerId,
+    peerId,
+    peerCallEnded,
+    comment,
+  }) => {
     setSelectedSlot(_id);
     if (bookerId) {
       const startWhen = format(start, 'E MMM dd yyyy, HH:mm');
@@ -90,8 +97,11 @@ export default function OwnerCalendar({
         when: startWhen + ' - ' + endWhen,
         cmnts: comment ? comment : '',
         peerIn: peerId ? peerId : null,
+        peerCallEnded: peerCallEnded,
       };
-      setBookerJoined(peerId != null && peerId !== callEnded);
+      setBookerJoined(peerId != null);
+      console.log('on owner side ' + peerId);
+      console.log(slInfo);
       setSlotInfo(slInfo);
       setSeeSlotInfo(true);
       setSeeSlot(false);
@@ -100,11 +110,15 @@ export default function OwnerCalendar({
       setSeeSlotInfo(false);
       setBookerJoined(false);
     }
+    console.log('owner owner');
+    console.log(peerId == '');
+    console.log(peerId == null);
   };
 
   const eventPropGetter = (event) => {
     let backgroundColor = '';
-    if (event.peerId && event.peerId !== callEnded) {
+    console.log('still owner, but color ' + event.peerId);
+    if (event.peerId) {
       backgroundColor = 'green';
     } else {
       backgroundColor = '';

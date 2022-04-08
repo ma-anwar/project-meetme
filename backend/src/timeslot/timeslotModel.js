@@ -12,6 +12,10 @@ export const timeslotSchema = Schema({
     title: String,
     bookerId: { type: Schema.Types.ObjectId, ref: "User" },
     peerId: String,
+    peerCallEnded: {
+        type: Boolean,
+        default: false,
+    },
     comment: String,
     eventId: { type: Schema.Types.ObjectId, ref: "Event", index: true },
 });
@@ -95,12 +99,13 @@ timeslotSchema.statics.getSlot = async function (slotId) {
         });
 };
 
-timeslotSchema.statics.addPeerId = async function (slotId, peerId) {
+timeslotSchema.statics.addPeerId = async function (slotId, peerId, peerCallEnded) {
     return this.findOneAndUpdate(
         { _id: slotId },
         {
             $set: {
                 peerId,
+                peerCallEnded
             },
         },
         { new: true }

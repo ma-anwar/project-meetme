@@ -29,7 +29,7 @@ const GET_EVENT = gql`
 
 const GET_EVENTS = gql`
   query eventsOwned($email: String!, $page: Int) {
-      eventsOwned(email: $email, page: $page) {
+    eventsOwned(email: $email, page: $page) {
       events {
         title
         description
@@ -55,10 +55,10 @@ const GET_TIMESLOT = gql`
         username
       }
       peerId
+      peerCallEnded
     }
   }
 `;
-
 
 const GET_TIMESLOTS_IN_RANGE = gql`
   query getSlotsBetween($input: getSlotsInput!) {
@@ -73,14 +73,9 @@ const GET_TIMESLOTS_IN_RANGE = gql`
         username
       }
       peerId
+      peerCallEnded
     }
   }
 `;
 
-export {
-  GET_ME,
-  GET_EVENT,
-  GET_EVENTS,
-  GET_TIMESLOT,
-  GET_TIMESLOTS_IN_RANGE,
-};
+export { GET_ME, GET_EVENT, GET_EVENTS, GET_TIMESLOT, GET_TIMESLOTS_IN_RANGE };

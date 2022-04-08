@@ -73,6 +73,7 @@ const START_PEER_CXN = gql`
     addPeerId(input: $input) {
       _id
       peerId
+      peerCallEnded
     }
   }
 `;

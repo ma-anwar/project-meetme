@@ -9,6 +9,7 @@ export const GET_SLOT_UPDATES = gql`
         start
         end
         peerId
+        peerCallEnded
         comment
         title
         bookerId {

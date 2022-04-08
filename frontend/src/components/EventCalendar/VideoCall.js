@@ -20,8 +20,6 @@ export default function VideoCall() {
 
   const { userProfile } = useAuth();
 
-  const callEnded = 'Call Ended';
-
   let isOwner = state?.ownIt;
 
   const { data: dataSingle, refetch: refetchSingle } = useQuery(GET_TIMESLOT, {
@@ -39,7 +37,8 @@ export default function VideoCall() {
       const peerCxn = {
         eventId: eventId,
         slotId: tsId,
-        peerId: callEnded,
+        peerId: null,
+        peerCallEnded: true,
       };
 
       addPeerId({
@@ -49,44 +48,67 @@ export default function VideoCall() {
   }, [refetchSingle, addPeerId, eventId, tsId]);
 
   useEffect(() => {
-    if (dataSingle && dataSingle.getSlot.peerId === callEnded) {
+    if (dataSingle && dataSingle.getSlot.peerCallEnded) {
+      console.log('EHHHH' + dataSingle.getSlot.peerCallEnded);
       setInCall(false);
+
       if (currentUserVideoRef.current)
         currentUserVideoRef.current.srcObject = null;
       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+      console.log('MY ID yeah ' + peerInstance.current?._id);
       peerInstance.current = null;
+
+      const peerCxn = {
+        eventId: eventId,
+        slotId: tsId,
+        peerId: null,
+        peerCallEnded: true,
+      };
+
+      addPeerId({
+        variables: { input: peerCxn },
+      });
+
+      console.log('SETTING to empty');
+
       if (!beforeCall) {
         setTimeout(() => {
           navigate(`/cal/${eventId}`);
         }, 1000);
       }
     }
-
-    if (
-      dataSingle &&
-      isOwner &&
-      beforeCall &&
-      peerInstance &&
-      peerInstance.current &&
-      peerInstance.current._id
-    ) {
-      call();
-    }
-  }, [dataSingle, peerInstance?.current?._id]);
+    console.log('FIRE');
+    console.log(dataSingle);
+    console.log(isOwner);
+    console.log(peerInstance);
+    console.log(peerInstance.current);
+    console.log('aight');
+  }, [
+    dataSingle,
+    peerInstance,
+    peerInstance.current,
+    peerInstance?.current?._id,
+  ]);
 
   useEffect(() => {
     const peer = new Peer({
       host: 'manwar.dev',
       port: 443,
       path: '/peerjs/meetme',
+      debug: 4,
+      // host: 'meetme-peers.herokuapp.com',
+      // port: 80,
+      // debug: 4,
     });
 
     peer.on('open', (id) => {
+      console.log('MY ID IS ' + id);
       if (isOwner === false) {
         const peerCxn = {
           eventId: eventId,
           slotId: tsId,
           peerId: id,
+          peerCallEnded: false,
         };
 
         addPeerId({
@@ -108,16 +130,27 @@ export default function VideoCall() {
         currentUserVideoRef.current.play();
         call.answer(mediaStream);
         call.on('stream', function (remoteStream) {
-          remoteVideoRef.current.srcObject = remoteStream;
-          remoteVideoRef.current.play();
+          try {
+            remoteVideoRef.current.srcObject = remoteStream;
+            try {
+              remoteVideoRef.current.play();
+            } catch (err) {
+              console.log(err);
+            }
+          } catch (err) {
+            console.log(err);
+          }
         });
       });
     });
 
     peerInstance.current = peer;
+    console.log('just updated PI tho?');
   }, [isOwner, userProfile._id, eventId, tsId]);
 
   const call = () => {
+    console.log('WHY DIDNT U CALL?');
+    console.log(dataSingle);
     let bJoin = false;
     if (dataSingle) {
       bJoin = !(dataSingle.getSlot.peerId === null);
@@ -143,7 +176,11 @@ export default function VideoCall() {
 
         call.on('stream', (remoteStream) => {
           remoteVideoRef.current.srcObject = remoteStream;
-          remoteVideoRef.current.play();
+          try {
+            remoteVideoRef.current.play();
+          } catch (err) {
+            console.log(err);
+          }
         });
       });
     }
@@ -155,7 +192,8 @@ export default function VideoCall() {
     const peerCxn = {
       eventId: eventId,
       slotId: tsId,
-      peerId: callEnded,
+      peerId: null,
+      peerCallEnded: true,
     };
 
     addPeerId({
@@ -164,7 +202,9 @@ export default function VideoCall() {
 
     currentUserVideoRef.current.srcObject = null;
     remoteVideoRef.current.srcObject = null;
+    console.log('MY ENDING CALL ID yeah ' + peerInstance.current?._id);
     peerInstance.current = null;
+
     setTimeout(() => {
       navigate(`/cal/${eventId}`);
     }, 1000);
@@ -174,7 +214,9 @@ export default function VideoCall() {
     <React.Fragment>
       {beforeCall && isOwner ? (
         <Box display="flex" flexDirection="row" justifyContent="center" m={2}>
-          <Typography>Connecting ...</Typography>
+          <Button variant="outlined" disabled={inCall} onClick={() => call()}>
+            Begin Call
+          </Button>
         </Box>
       ) : null}
       {beforeCall && !isOwner ? (

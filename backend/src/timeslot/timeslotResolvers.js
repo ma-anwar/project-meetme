@@ -116,8 +116,8 @@ const getSlot = async (parent, { input }, { models }) => {
 };
 
 const addPeerId = async (parent, { input }, { models }) => {
-    const { eventId, slotId, peerId } = input;
-    const updatedSlot = await models.Timeslot.addPeerId(slotId, peerId);
+    const { eventId, slotId, peerId, peerCallEnded } = input;
+    const updatedSlot = await models.Timeslot.addPeerId(slotId, peerId, peerCallEnded);
     await updatedSlot.populate("bookerId");
     publish(eventId, "UPDATE", updatedSlot);
 

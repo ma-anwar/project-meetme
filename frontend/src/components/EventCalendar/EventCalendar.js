@@ -84,6 +84,7 @@ export default function EventCalendar({
         comment: slot.comment,
         bookerId: slot.bookerId,
         peerId: slot.peerId,
+        peerCallEnded: slot.peerCallEnded,
       }));
 
       if (isOwner) {

@@ -23,6 +23,7 @@ export default gql`
         bookerId: Booker
         title: String
         peerId: String
+        peerCallEnded: Boolean
         comment: String
     }
 
@@ -59,7 +60,8 @@ export default gql`
     input peerCxnInput {
         eventId: ID!
         slotId: ID!
-        peerId: ID!
+        peerId: ID
+        peerCallEnded: Boolean
     }
     type slotUpdate {
         type: String!

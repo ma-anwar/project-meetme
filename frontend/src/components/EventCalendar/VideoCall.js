@@ -116,23 +116,24 @@ export default function VideoCall() {
     peer.on('call', (call) => {
       setInCall(true);
       setBeforeCall(false);
-      var getUserMedia =
-        navigator.getUserMedia ||
-        navigator.webkitGetUserMedia ||
-        navigator.mozGetUserMedia;
 
-      getUserMedia({ video: true, audio: true }, (mediaStream) => {
-        currentUserVideoRef.current.srcObject = mediaStream;
-        currentUserVideoRef.current.play();
-        medStream.current = mediaStream;
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then(function (mediaStream) {
+          currentUserVideoRef.current.srcObject = mediaStream;
+          currentUserVideoRef.current.play();
+          medStream.current = mediaStream;
 
-        call.answer(mediaStream);
-        call.on('stream', function (remoteStream) {
-          remoteVideoRef.current.srcObject = remoteStream;
-          const p1 = remoteVideoRef.current.play();
-          p1.catch((err) => {});
+          call.answer(mediaStream);
+          call.on('stream', function (remoteStream) {
+            remoteVideoRef.current.srcObject = remoteStream;
+            const p1 = remoteVideoRef.current.play();
+            p1.catch((err) => {});
+          });
+        })
+        .catch(function (e) {
+          console.error(e);
         });
-      });
     });
 
     peerInstance.current = peer;
@@ -153,24 +154,24 @@ export default function VideoCall() {
         remPeerId = dataSingle.getSlot.peerId;
       }
 
-      var getUserMedia =
-        navigator.getUserMedia ||
-        navigator.webkitGetUserMedia ||
-        navigator.mozGetUserMedia;
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then(function (mediaStream) {
+          currentUserVideoRef.current.srcObject = mediaStream;
+          currentUserVideoRef.current.play();
+          medStream.current = mediaStream;
 
-      getUserMedia({ video: true, audio: true }, (mediaStream) => {
-        currentUserVideoRef.current.srcObject = mediaStream;
-        currentUserVideoRef.current.play();
-        medStream.current = mediaStream;
+          const call = peerInstance.current.call(remPeerId, mediaStream);
 
-        const call = peerInstance.current.call(remPeerId, mediaStream);
-
-        call.on('stream', (remoteStream) => {
-          remoteVideoRef.current.srcObject = remoteStream;
-          const p1 = remoteVideoRef.current.play();
-          p1.catch((err) => {});
+          call.on('stream', (remoteStream) => {
+            remoteVideoRef.current.srcObject = remoteStream;
+            const p1 = remoteVideoRef.current.play();
+            p1.catch((err) => {});
+          });
+        })
+        .catch(function (e) {
+          console.error(e);
         });
-      });
     }
   };
 

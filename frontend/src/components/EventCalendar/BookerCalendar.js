@@ -129,10 +129,12 @@ export default function BookerCalendar({
     const today = new Date();
     const bufferTime = add(event.start, { minutes: timeslotLength });
     let backgroundColor = '';
-    if (event.bookerId == null || isBefore(bufferTime, today)) {
-      backgroundColor = '';
-    } else {
+    if (event.bookerId && !isBefore(bufferTime, today)) {
       backgroundColor = 'green';
+    } else if (event.bookerId && isBefore(bufferTime, today)) {
+      backgroundColor = 'purple';
+    } else {
+      backgroundColor = '';
     }
     return { style: { backgroundColor } };
   };

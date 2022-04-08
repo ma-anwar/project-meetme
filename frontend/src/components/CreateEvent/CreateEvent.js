@@ -16,8 +16,8 @@ export default function CreateEvent() {
     title: '',
     description: '',
     dateRange: [new Date(), new Date()],
-    location: '',
-    timeslotLength: 30,
+    location: 'virtual',
+    timeslotLength: null,
   });
   const [formStep, setFormStep] = useState(0);
   const navigate = useNavigate();

@@ -19,11 +19,11 @@ export default function Profile() {
       <Typography variant="h4" m={2}>
         Hey {userProfile.username}!
       </Typography>
-      <EventLoader email={userProfile.email}/>
       <Button variant="contained" onClick={() => navigate('/create_event')}>
         <AddIcon />
         Create Event
       </Button>
+      <EventLoader email={userProfile.email} />
     </Box>
   );
 }

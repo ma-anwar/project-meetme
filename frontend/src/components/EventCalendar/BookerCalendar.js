@@ -78,7 +78,7 @@ export default function BookerCalendar({
         setBook(false);
         if (
           differenceInMinutes(start, new Date()) > -timeslotLength &&
-          differenceInMinutes(start, new Date()) < 300
+          differenceInMinutes(start, new Date()) < 60
         ) {
           setStartCall(true);
         } else {

@@ -3,6 +3,7 @@ import express from "express";
 import session from "express-session";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoSanitize from "express-mongo-sanitize";
 
 dotenv.config();
 import connectRedis from "connect-redis";
@@ -14,6 +15,14 @@ import corsOptions from "./utils/corsOptions";
 const environment = process.env.NODE_ENV || "development";
 
 const app = express();
+
+/*
+app.use(
+    mongoSanitize({
+        allowDots: true,
+    })
+);
+*/
 
 if (environment === "development") {
     app.use(cors(corsOptions));

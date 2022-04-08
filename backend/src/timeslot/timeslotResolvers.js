@@ -67,6 +67,11 @@ const bookSlot = async (parent, { input }, { models, user }) => {
 
     await models.Event.throwIfOwner(eventId, user._id);
 
+    const slot = await models.Timeslot.getSlot(slotId);
+    if (slot.bookerId) {
+        throw new Error("Can't book slot that's already booked");
+    }
+
     const bookedSlot = await models.Timeslot.bookSlot(
         slotId,
         user._id,
@@ -80,10 +85,13 @@ const bookSlot = async (parent, { input }, { models, user }) => {
     return bookedSlot;
 };
 
-const unbookSlot = async (parent, { input }, { models }) => {
-    // TODO: Check that booker is unbooking
+const unbookSlot = async (parent, { input }, { models, user }) => {
     const { eventId, slotId, title = "", comment = "" } = input;
 
+    const slot = await models.Timeslot.getSlot(slotId);
+    if (!slot.bookerId.equals(user._id)) {
+        throw new Error("Can't unbook someone elses slot");
+    }
     const unbookedSlot = await models.Timeslot.unbookSlot(slotId);
     await unbookedSlot.populate("bookerId");
 
@@ -93,8 +101,12 @@ const unbookSlot = async (parent, { input }, { models }) => {
 };
 
 const deleteSlot = async (parent, { input }, { models, user }) => {
-    // TODO: Check if slot is already booked
     const { eventId, slotId } = input;
+
+    const slot = await models.Timeslot.getSlot(slotId);
+    if (slot.bookerId) {
+        throw new Error("Can't delete booked slot");
+    }
 
     await models.Event.throwIfNotEvent(eventId);
     await models.Event.throwIfNotOwner(eventId, user._id);
@@ -117,7 +129,11 @@ const getSlot = async (parent, { input }, { models }) => {
 
 const addPeerId = async (parent, { input }, { models }) => {
     const { eventId, slotId, peerId, peerCallEnded } = input;
-    const updatedSlot = await models.Timeslot.addPeerId(slotId, peerId, peerCallEnded);
+    const updatedSlot = await models.Timeslot.addPeerId(
+        slotId,
+        peerId,
+        peerCallEnded
+    );
     await updatedSlot.populate("bookerId");
     publish(eventId, "UPDATE", updatedSlot);
 

@@ -96,6 +96,7 @@ export default function BookerCalendar({
     setSelectedSlot(null);
     setCmnt('');
     setBook(false);
+    setStartCall(false);
   };
 
   const onCmntChange = (e) => {
@@ -117,6 +118,7 @@ export default function BookerCalendar({
 
     setCmnt('');
     setUnBook(false);
+    setStartCall(false);
   };
 
   const handleClose = () => {

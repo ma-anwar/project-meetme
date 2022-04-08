@@ -62,7 +62,6 @@ const getEvent = async (parent, { id }, { models }) => {
         throw new Error("Event not found");
     }
 
-    console.log(event);
     return event;
 };
 

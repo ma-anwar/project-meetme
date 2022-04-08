@@ -11,6 +11,7 @@ export default function EventCalWrapper() {
 
   const { loading, data, error } = useQuery(GET_EVENT, {
     variables: { id: eventId },
+    fetchPolicy: 'network-only',
   });
 
   if (loading) {

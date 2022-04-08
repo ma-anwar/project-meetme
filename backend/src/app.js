@@ -31,14 +31,19 @@ if (environment === "development") {
 }
 const RedisStore = connectRedis(session);
 
-app.use(
-    session({
-        store: new RedisStore({ client: getRedisClient() }),
-        secret: process.env.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: true,
-    })
-);
+const sesh = {
+    store: new RedisStore({ client: getRedisClient() }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {},
+};
+
+if (environment === "production") {
+    sesh.cookie.sameSite = true;
+}
+
+app.use(session(sesh));
 
 app.use(express.json());
 

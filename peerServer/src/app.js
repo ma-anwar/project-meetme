@@ -14,6 +14,9 @@ app.use(
         secret: "MY_SECRET",
         resave: false,
         saveUninitialized: true,
+        cookie: {
+            sameSite: true,
+        },
     })
 );
 

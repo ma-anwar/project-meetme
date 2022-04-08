@@ -53,7 +53,6 @@ export default function BookerCalendar({
     });
 
     e.target.reset();
-    setCmnt('');
     setBook(false);
     setUnBook(true);
   };

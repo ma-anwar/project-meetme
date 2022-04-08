@@ -15,6 +15,7 @@ export default function VideoCall() {
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
   const peerInstance = useRef(null);
+  let medStream = useRef(null);
   const [beforeCall, setBeforeCall] = useState(true);
   const [inCall, setInCall] = useState(false);
 
@@ -52,10 +53,13 @@ export default function VideoCall() {
       console.log('EHHHH' + dataSingle.getSlot.peerCallEnded);
       setInCall(false);
 
+      if (medStream.current) medStream.current.getVideoTracks()[0].stop();
+      if (medStream.current) medStream.current.getAudioTracks()[0].stop();
       if (currentUserVideoRef.current)
         currentUserVideoRef.current.srcObject = null;
       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
       console.log('MY ID yeah ' + peerInstance.current?._id);
+      if (peerInstance.current) peerInstance.current.disconnect();
       peerInstance.current = null;
 
       const peerCxn = {
@@ -69,20 +73,12 @@ export default function VideoCall() {
         variables: { input: peerCxn },
       });
 
-      console.log('SETTING to empty');
-
       if (!beforeCall) {
         setTimeout(() => {
           navigate(`/cal/${eventId}`);
         }, 1000);
       }
     }
-    console.log('FIRE');
-    console.log(dataSingle);
-    console.log(isOwner);
-    console.log(peerInstance);
-    console.log(peerInstance.current);
-    console.log('aight');
   }, [
     dataSingle,
     peerInstance,
@@ -128,19 +124,18 @@ export default function VideoCall() {
       getUserMedia({ video: true, audio: true }, (mediaStream) => {
         currentUserVideoRef.current.srcObject = mediaStream;
         currentUserVideoRef.current.play();
+        medStream.current = mediaStream;
+
         call.answer(mediaStream);
         call.on('stream', function (remoteStream) {
           remoteVideoRef.current.srcObject = remoteStream;
           const p1 = remoteVideoRef.current.play();
-          p1.catch((err) => {
-            console.log(err);
-          });
+          p1.catch((err) => {});
         });
       });
     });
 
     peerInstance.current = peer;
-    console.log('just updated PI tho?');
   }, [isOwner, userProfile._id, eventId, tsId]);
 
   const call = () => {
@@ -166,15 +161,14 @@ export default function VideoCall() {
       getUserMedia({ video: true, audio: true }, (mediaStream) => {
         currentUserVideoRef.current.srcObject = mediaStream;
         currentUserVideoRef.current.play();
+        medStream.current = mediaStream;
 
         const call = peerInstance.current.call(remPeerId, mediaStream);
 
         call.on('stream', (remoteStream) => {
           remoteVideoRef.current.srcObject = remoteStream;
           const p1 = remoteVideoRef.current.play();
-          p1.catch((err) => {
-            console.log(err);
-          });
+          p1.catch((err) => {});
         });
       });
     }
@@ -194,9 +188,11 @@ export default function VideoCall() {
       variables: { input: peerCxn },
     });
 
+    medStream.current.getVideoTracks()[0].stop();
+    medStream.current.getAudioTracks()[0].stop();
     currentUserVideoRef.current.srcObject = null;
     remoteVideoRef.current.srcObject = null;
-    console.log('MY ENDING CALL ID yeah ' + peerInstance.current?._id);
+    if (peerInstance.current) peerInstance.current.disconnect();
     peerInstance.current = null;
 
     setTimeout(() => {

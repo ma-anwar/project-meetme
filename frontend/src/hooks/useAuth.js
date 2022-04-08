@@ -1,3 +1,5 @@
+/* Auth Provider - (https://www.jeffedmondson.dev/blog/react-protected-routes/) */
+
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { GET_ME } from '../graphql/queries';

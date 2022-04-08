@@ -10,7 +10,6 @@ import VideoCall from './components/EventCalendar/VideoCall';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import { Box, CircularProgress } from '@mui/material';
-import Credits from './components/Credits/Credits';
 
 function App() {
   const { authReady, loggedIn } = useAuth();
@@ -28,7 +27,6 @@ function App() {
           <NavBar />
         </header>
         <Routes>
-          <Route path="/credits" element={<Credits />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
           <Route

@@ -1,3 +1,5 @@
+/*Configuring dynamic cors - (https://www.npmjs.com/package/cors)*/
+
 const whitelist = [
     "http://localhost:3050",
     "http://localhost:3000",

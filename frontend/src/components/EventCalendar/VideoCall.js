@@ -50,7 +50,6 @@ export default function VideoCall() {
 
   useEffect(() => {
     if (dataSingle && dataSingle.getSlot.peerCallEnded) {
-      console.log('EHHHH' + dataSingle.getSlot.peerCallEnded);
       setInCall(false);
 
       if (medStream.current) medStream.current.getVideoTracks()[0].stop();
@@ -58,7 +57,6 @@ export default function VideoCall() {
       if (currentUserVideoRef.current)
         currentUserVideoRef.current.srcObject = null;
       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
-      console.log('MY ID yeah ' + peerInstance.current?._id);
       if (peerInstance.current) peerInstance.current.disconnect();
       peerInstance.current = null;
 
@@ -91,14 +89,9 @@ export default function VideoCall() {
       host: 'manwar.dev',
       port: 443,
       path: '/peerjs/meetme',
-      debug: 4,
-      // host: 'meetme-peers.herokuapp.com',
-      // port: 80,
-      // debug: 4,
     });
 
     peer.on('open', (id) => {
-      console.log('MY ID IS ' + id);
       if (isOwner === false) {
         const peerCxn = {
           eventId: eventId,
@@ -140,8 +133,6 @@ export default function VideoCall() {
   }, [isOwner, userProfile._id, eventId, tsId]);
 
   const call = () => {
-    console.log('WHY DIDNT U CALL?');
-    console.log(dataSingle);
     let bJoin = false;
     if (dataSingle) {
       bJoin = !(dataSingle.getSlot.peerId === null);

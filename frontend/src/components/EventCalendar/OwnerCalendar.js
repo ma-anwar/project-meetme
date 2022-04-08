@@ -99,9 +99,7 @@ export default function OwnerCalendar({
         peerIn: peerId ? peerId : null,
         peerCallEnded: peerCallEnded,
       };
-      setBookerJoined(peerId != null);
-      console.log('on owner side ' + peerId);
-      console.log(slInfo);
+      setBookerJoined(peerId !== null);
       setSlotInfo(slInfo);
       setSeeSlotInfo(true);
       setSeeSlot(false);
@@ -110,14 +108,10 @@ export default function OwnerCalendar({
       setSeeSlotInfo(false);
       setBookerJoined(false);
     }
-    console.log('owner owner');
-    console.log(peerId == '');
-    console.log(peerId == null);
   };
 
   const eventPropGetter = (event) => {
     let backgroundColor = '';
-    console.log('still owner, but color ' + event.peerId);
     if (event.peerId) {
       backgroundColor = 'green';
     } else {

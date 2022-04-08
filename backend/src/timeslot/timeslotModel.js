@@ -20,7 +20,7 @@ export const timeslotSchema = Schema({
     eventId: { type: Schema.Types.ObjectId, ref: "Event", index: true },
 });
 
-timeslotSchema.statics.createSlots = async function (eventId, slots) {
+timeslotSchema.statics.createSlots = function (eventId, slots) {
     const slotsWithEvent = slots.map((slot) => {
         slot.eventId = eventId;
         return slot;
@@ -31,7 +31,7 @@ timeslotSchema.statics.createSlots = async function (eventId, slots) {
     });
 };
 
-timeslotSchema.statics.getSlotsBetween = async function (eventId, start, end) {
+timeslotSchema.statics.getSlotsBetween = function (eventId, start, end) {
     return this.find({
         eventId,
         start: { $gte: start },
@@ -44,19 +44,14 @@ timeslotSchema.statics.getSlotsBetween = async function (eventId, start, end) {
         });
 };
 
-timeslotSchema.statics.deleteSlot = async function (slotId) {
+timeslotSchema.statics.deleteSlot = function (slotId) {
     return this.deleteOne({ _id: slotId }).catch((err) => {
         console.log(err);
         throw new Error("Unable to delete slot");
     });
 };
 
-timeslotSchema.statics.bookSlot = async function (
-    slotId,
-    user,
-    title,
-    comment
-) {
+timeslotSchema.statics.bookSlot = function (slotId, user, title, comment) {
     return this.findOneAndUpdate(
         { _id: slotId },
         {
@@ -73,7 +68,7 @@ timeslotSchema.statics.bookSlot = async function (
     });
 };
 
-timeslotSchema.statics.unbookSlot = async function (slotId, title, comment) {
+timeslotSchema.statics.unbookSlot = function (slotId, title, comment) {
     return this.findOneAndUpdate(
         { _id: slotId },
         {
@@ -90,7 +85,7 @@ timeslotSchema.statics.unbookSlot = async function (slotId, title, comment) {
     });
 };
 
-timeslotSchema.statics.getSlot = async function (slotId) {
+timeslotSchema.statics.getSlot = function (slotId) {
     return this.findOne({ _id: slotId })
         .exec()
         .catch((err) => {
@@ -99,13 +94,13 @@ timeslotSchema.statics.getSlot = async function (slotId) {
         });
 };
 
-timeslotSchema.statics.addPeerId = async function (slotId, peerId, peerCallEnded) {
+timeslotSchema.statics.addPeerId = function (slotId, peerId, peerCallEnded) {
     return this.findOneAndUpdate(
         { _id: slotId },
         {
             $set: {
                 peerId,
-                peerCallEnded
+                peerCallEnded,
             },
         },
         { new: true }
@@ -115,7 +110,7 @@ timeslotSchema.statics.addPeerId = async function (slotId, peerId, peerCallEnded
     });
 };
 
-timeslotSchema.statics.getSlots = async function (eventId) {
+timeslotSchema.statics.getSlots = function (eventId) {
     return this.find({ eventId }).catch((err) => {
         console.log(err);
         throw new Error("Could not retrieve timeslots");

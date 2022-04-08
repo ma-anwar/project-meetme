@@ -16,13 +16,11 @@ const environment = process.env.NODE_ENV || "development";
 
 const app = express();
 
-/*
 app.use(
     mongoSanitize({
         allowDots: true,
     })
 );
-*/
 
 if (environment === "development") {
     app.use(cors(corsOptions));

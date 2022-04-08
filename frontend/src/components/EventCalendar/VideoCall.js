@@ -130,16 +130,6 @@ export default function VideoCall() {
         currentUserVideoRef.current.play();
         call.answer(mediaStream);
         call.on('stream', function (remoteStream) {
-          // try {
-          //   remoteVideoRef.current.srcObject = remoteStream;
-          //   try {
-          //     remoteVideoRef.current.play();
-          //   } catch (err) {
-          //     console.log(err);
-          //   }
-          // } catch (err) {
-          //   console.log(err);
-          // }
           remoteVideoRef.current.srcObject = remoteStream;
           const p1 = remoteVideoRef.current.play();
           p1.catch((err) => {
@@ -185,11 +175,6 @@ export default function VideoCall() {
           p1.catch((err) => {
             console.log(err);
           });
-          // try {
-          //   remoteVideoRef.current.play();
-          // } catch (err) {
-          //   console.log(err);
-          // }
         });
       });
     }

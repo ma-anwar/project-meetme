@@ -37,7 +37,6 @@ export default function EventLoader({ email }) {
   };
 
   const nextPg = () => {
-    console.log(data.eventsOwned);
     if (data.eventsOwned.hasMore) {
       setPage(page + 1);
     }

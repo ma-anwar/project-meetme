@@ -4,27 +4,38 @@ import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import enCA from 'date-fns/locale/en-CA';
 import format from 'date-fns/format';
+import { isBefore, differenceInMinutes, add } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import sx from 'mui-sx';
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField, Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { BOOK_SLOT, UNBOOK_SLOT } from '../../graphql/mutations';
-import { GET_EVENT } from '../../graphql/queries';
 import { useMutation } from '@apollo/client';
+import { useSubscribeToMore } from '../../hooks/useSubscribeToMore';
 
-export default function BookerCalendar({ slots, setSlots, eventId }) {
-  const [bookSlot] = useMutation(BOOK_SLOT, {
-    refetchQueries: [GET_EVENT],
-  });
-  const [unbookSlot] = useMutation(UNBOOK_SLOT, {
-    refetchQueries: [GET_EVENT],
-  });
+export default function BookerCalendar({
+  slots,
+  eventId,
+  timeslotLength,
+  isOwner,
+  subToUpdates,
+  defaultDate,
+  onRangeChange,
+}) {
+  useSubscribeToMore(subToUpdates);
+  const [bookSlot] = useMutation(BOOK_SLOT);
+  const [unbookSlot] = useMutation(UNBOOK_SLOT);
 
   const [book, setBook] = useState(false);
   const [unBook, setUnBook] = useState(false);
   const [cmnt, setCmnt] = useState('');
   const [when, setWhen] = useState(null);
+  const [whenStart, setWhenStart] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [showError, setShowError] = useState(false);
+  const [showStartCall, setStartCall] = useState(false);
+  const navigate = useNavigate();
 
   const { userProfile } = useAuth();
 
@@ -34,7 +45,7 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
       eventId: eventId,
       slotId: selectedSlot,
       title: 'Booked-' + userProfile.username,
-      //comment: e.target.appt_cmnts,
+      comment: e.target.appt_cmnts.textContent,
     };
 
     bookSlot({
@@ -42,21 +53,42 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
     });
 
     e.target.reset();
-    setCmnt('');
     setBook(false);
+    setUnBook(true);
   };
 
-  const bookAppt = ({ start, end, _id, bookerId }) => {
-    const startWhen = format(start, 'E MMM dd yyyy, HH:mm');
-    const endWhen = format(end, 'E MMM dd yyyy, HH:mm');
-    setSelectedSlot(_id);
-    setWhen(startWhen + ' - ' + endWhen);
-    if (bookerId && bookerId._id === userProfile._id) {
-      setUnBook(true);
+  const bookAppt = ({ start, end, _id, bookerId, comment }) => {
+    const today = new Date();
+    const bufferTime = add(start, { minutes: timeslotLength });
+    if (isBefore(start, today) && isBefore(bufferTime, today)) {
+      setShowError(true);
       setBook(false);
-    } else {
-      setBook(true);
       setUnBook(false);
+      setStartCall(false);
+    } else {
+      setShowError(false);
+      const startWhen = format(start, 'E MMM dd yyyy, HH:mm');
+      const endWhen = format(end, 'E MMM dd yyyy, HH:mm');
+      setSelectedSlot(_id);
+      setWhenStart(startWhen);
+      setWhen(startWhen + ' - ' + endWhen);
+      comment ? setCmnt(comment) : setCmnt('');
+      if (bookerId && bookerId._id === userProfile._id) {
+        setUnBook(true);
+        setBook(false);
+        if (
+          differenceInMinutes(start, new Date()) > -timeslotLength &&
+          differenceInMinutes(start, new Date()) < 60
+        ) {
+          setStartCall(true);
+        } else {
+          setStartCall(false);
+        }
+      } else {
+        setBook(true);
+        setUnBook(false);
+        setStartCall(false);
+      }
     }
   };
 
@@ -64,6 +96,7 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
     setSelectedSlot(null);
     setCmnt('');
     setBook(false);
+    setStartCall(false);
   };
 
   const onCmntChange = (e) => {
@@ -76,7 +109,7 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
       eventId: eventId,
       slotId: selectedSlot,
       title: 'Empty slot',
-      //comment: "",
+      comment: '',
     };
 
     unbookSlot({
@@ -85,11 +118,26 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
 
     setCmnt('');
     setUnBook(false);
+    setStartCall(false);
   };
 
-  const handleClose = (e) => {
+  const handleClose = () => {
     setSelectedSlot(null);
     setUnBook(false);
+  };
+
+  const eventPropGetter = (event) => {
+    const today = new Date();
+    const bufferTime = add(event.start, { minutes: timeslotLength });
+    let backgroundColor = '';
+    if (event.bookerId && !isBefore(bufferTime, today)) {
+      backgroundColor = 'green';
+    } else if (event.bookerId && isBefore(bufferTime, today)) {
+      backgroundColor = 'purple';
+    } else {
+      backgroundColor = '';
+    }
+    return { style: { backgroundColor } };
   };
 
   const locales = {
@@ -116,10 +164,19 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
         startAccessor="start"
         endAccessor="end"
         defaultView={Views.WEEK}
+        defaultDate={defaultDate}
+        views={['week', 'day']}
         style={{ height: 500 }}
-        selectable
+        step={timeslotLength}
         onSelectEvent={bookAppt}
+        eventPropGetter={eventPropGetter}
+        onRangeChange={onRangeChange}
       />
+      {showError ? (
+        <Typography variant="h6" align="center" p={1}>
+          Sorry, you cannot book an appointment that has passed.
+        </Typography>
+      ) : null}
       {book ? (
         <form onSubmit={handleSubmit}>
           <Box display="flex" flexDirection="column">
@@ -164,6 +221,12 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
       ) : null}
       {unBook ? (
         <Box display="flex" flexDirection="column">
+          <Typography align="center" style={{ color: 'green' }} p={1}>
+            You have successfully booked this timeslot.
+          </Typography>
+          <Typography align="center" p={1}>
+            Please come back at {whenStart} to start the call.
+          </Typography>
           <TextField
             sx={sx(base)}
             inputProps={{ style: { fontWeight: 'bold' } }}
@@ -190,24 +253,61 @@ export default function BookerCalendar({ slots, setSlots, eventId }) {
             rows={5}
             disabled
           />
-          <Box display="flex" flexDirection="row" justifyContent="center">
-            <Button
-              sx={sx(base)}
-              type="button"
-              variant="contained"
-              onClick={handleCancelBooking}
-            >
-              Cancel Booking
-            </Button>
-            <Button
-              sx={sx(base)}
-              type="button"
-              variant="outlined"
-              onClick={handleClose}
-            >
-              Close
-            </Button>
-          </Box>
+        </Box>
+      ) : null}
+      {unBook && !showStartCall ? (
+        <Box display="flex" flexDirection="row" justifyContent="center">
+          <Button
+            sx={sx(base)}
+            type="button"
+            variant="contained"
+            onClick={handleCancelBooking}
+          >
+            Cancel Booking
+          </Button>
+          <Button
+            sx={sx(base)}
+            type="button"
+            variant="outlined"
+            onClick={handleClose}
+          >
+            Close
+          </Button>
+        </Box>
+      ) : null}
+      {showStartCall ? (
+        <Box display="flex" flexDirection="row" justifyContent="center">
+          <Button
+            sx={sx(base)}
+            type="button"
+            variant="contained"
+            onClick={handleCancelBooking}
+          >
+            Cancel Booking
+          </Button>
+          <Button
+            sx={sx(base)}
+            type="button"
+            variant="outlined"
+            onClick={handleClose}
+          >
+            Close
+          </Button>
+          <Button
+            sx={{
+              margin: 1,
+              backgroundColor: 'green',
+            }}
+            type="button"
+            variant="contained"
+            onClick={() =>
+              navigate('/video_call/' + eventId + '/' + selectedSlot, {
+                state: { ownIt: isOwner },
+              })
+            }
+          >
+            Start Call
+          </Button>
         </Box>
       ) : null}
     </Box>

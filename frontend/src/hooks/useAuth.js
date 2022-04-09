@@ -1,8 +1,11 @@
+/* Auth Provider - (https://www.jeffedmondson.dev/blog/react-protected-routes/) */
+
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { GET_ME } from '../graphql/queries';
 import { useQuery } from '@apollo/client';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { API } from '../utils/constants';
 
 const AuthContext = createContext(null);
 
@@ -35,37 +38,9 @@ export const AuthProvider = ({ children }) => {
     }
   }, [data, error]);
 
-  const signup = async (username, email, password) => {
-    try {
-      const resp = await axios.post('/api/auth/signup', {
-        username,
-        email,
-        password,
-      });
-      await refetch();
-      setLoggedIn(true);
-      redirect();
-    } catch (err) {
-      setLoggedIn(false);
-      console.error(err);
-    }
-  };
-
-  const login = async (email, password) => {
-    try {
-      const resp = await axios.post('/api/auth/login', { email, password });
-      await refetch();
-      setLoggedIn(true);
-      redirect();
-    } catch (err) {
-      setLoggedIn(false);
-      console.error(err);
-    }
-  };
-
   const logout = async () => {
     try {
-      await axios.post('/api/auth/signout');
+      await axios.post(`${API}/api/auth/signout`);
       setLoggedIn(false);
     } catch (err) {
       console.error(err);
@@ -75,12 +50,13 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
+        setLoggedIn,
         loggedIn,
-        login,
         logout,
-        signup,
         authReady,
         userProfile,
+        redirect,
+        refetch,
       }}
     >
       {children}

@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:focal
+    expose:
+      - "27017"
+    volumes:
+      - db:/data/db
+
+  redis:
+    image: redis:alpine
+    restart: always
+    expose:
+      - 6379
+    command: ["redis-server", "--bind", "redis", "--port", "6379"]
+    volumes:
+      - cache:/data/cache
+
+  backend:
+    image: manwar01/meetme-backend:latest
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      - DB_URL=mongodb://mongodb:27017/database
+      - PORT=5000
+      - SESSION_SECRET=MY_SECRET
+      - NODE_ENV=production
+    expose:
+      - 5000
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  frontend:
+    image: manwar01/meetme-frontend:latest
+    stdin_open: true
+    environment:
+      - REACT_APP_API_PREFIX=/api
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  nginx:
+    depends_on:
+      - backend
+      - frontend
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports: 
+      - 3000:80
+
+  peerserver:
+    build:
+      context: ./peerServer
+      dockerfile: Dockerfile
+    expose:
+      - 4000
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_HTTP_API_TOKEN=SecretSecretIGottaKeepIt
+    command: --http-api-update
+    expose:
+      - 8080
+
+volumes:
+  db:
+  cache:

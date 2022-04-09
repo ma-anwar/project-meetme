@@ -10,22 +10,23 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { DELETE_EVENT } from '../../graphql/mutations';
 import { useMutation } from '@apollo/client';
+import { format, fromUnixTime } from 'date-fns';
 
-export default function EventItem({ id, title, startDate, endDate }) {
+export default function EventItem({ id, title, startDate, endDate, refetch }) {
   const [deleteEvent] = useMutation(DELETE_EVENT);
   const navigate = useNavigate();
-  const secondary = `${new Date(startDate * 1000)} to ${new Date(
-    endDate * 1000
-  )}`;
 
-  const handleDeleteEvent = (e) => {
-    e.preventDefault();
+  const start = format(fromUnixTime(startDate), 'E MMM dd yyyy');
+  const end = format(fromUnixTime(endDate), 'E MMM dd yyyy');
+  const secondary = `${start} to ${end}`;
+
+  const handleDeleteEvent = () => {
     const deletingEvent = {
       eventId: id,
     };
     deleteEvent({
       variables: { input: deletingEvent },
-    });
+    }).then(refetch());
   };
 
   return (

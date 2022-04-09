@@ -3,17 +3,24 @@ import express from "express";
 import session from "express-session";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoSanitize from "express-mongo-sanitize";
 
 dotenv.config();
 import connectRedis from "connect-redis";
-import redisClient from "./utils/redisLoader";
-import isAuthenticated from "./middleware/isAuthenticated";
-import authRouter from "./routes/authRoutes";
+import getRedisClient from "./utils/redisLoader";
+import isAuthenticated from "./auth/authMiddleware";
+import authRouter from "./auth/authRoutes";
 import corsOptions from "./utils/corsOptions";
 
 const environment = process.env.NODE_ENV || "development";
 
 const app = express();
+
+app.use(
+    mongoSanitize({
+        allowDots: true,
+    })
+);
 
 if (environment === "development") {
     app.use(cors(corsOptions));
@@ -24,14 +31,19 @@ if (environment === "development") {
 }
 const RedisStore = connectRedis(session);
 
-app.use(
-    session({
-        store: new RedisStore({ client: redisClient }),
-        secret: process.env.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: true,
-    })
-);
+const sesh = {
+    store: new RedisStore({ client: getRedisClient() }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {},
+};
+
+if (environment === "production") {
+    sesh.cookie.sameSite = true;
+}
+
+app.use(session(sesh));
 
 app.use(express.json());
 

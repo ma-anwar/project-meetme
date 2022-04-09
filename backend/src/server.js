@@ -1,8 +1,9 @@
 import { ApolloServer } from "apollo-server-express";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 
 import models from "./models";
-import schema from "./schema";
-import resolvers from "./resolvers";
+import typeDefs from "./graphql/schema";
+import resolvers from "./graphql/resolvers";
 
 const BASIC_LOGGING = {
     requestDidStart(requestContext) {
@@ -12,8 +13,7 @@ const BASIC_LOGGING = {
         return {
             didEncounterErrors(requestContext) {
                 console.log(
-                    `an error happened in response to query ${ 
-                        requestContext.request.query}`
+                    `an error happened in response to query ${requestContext.request.query}`
                 );
                 console.log(requestContext.errors);
             },
@@ -25,15 +25,17 @@ const BASIC_LOGGING = {
     },
 };
 
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+
 const server = new ApolloServer({
     introspection: true,
-    typeDefs: schema,
+    schema,
     resolvers,
     context: async ({ req }) => {
         const user = await models.User.findOne({ _id: req.session.user._id });
         return { models, user };
     },
-    plugins: [BASIC_LOGGING],
 });
 
 export default server;
+export { schema };

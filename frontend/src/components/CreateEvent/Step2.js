@@ -1,8 +1,5 @@
 import * as React from 'react';
 import { Typography, TextField } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 
 export default function Step2({ formStep, newEvent, handleChange }) {
   if (formStep !== 2) {
@@ -31,20 +28,6 @@ export default function Step2({ formStep, newEvent, handleChange }) {
         }}
         variant="standard"
       />
-      <FormControl>
-        <Typography variant="p" m={4}>
-          And where will your event take place?
-        </Typography>
-        <Select
-          value={newEvent.location}
-          name="location"
-          label="Location"
-          onChange={handleChange}
-        >
-          <MenuItem value={'virtual'}>Virtual</MenuItem>
-          <MenuItem value={'inPerson'}>In-Person</MenuItem>
-        </Select>
-      </FormControl>
     </React.Fragment>
   );
 }

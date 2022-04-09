@@ -1,4 +1,11 @@
-const whitelist = ["http://localhost:3000", "https://studio.apollographql.com"];
+/*Configuring dynamic cors - (https://www.npmjs.com/package/cors)*/
+
+const whitelist = [
+    "http://localhost:3050",
+    "http://localhost:3000",
+    "https://studio.apollographql.com",
+    "https://manwar.dev",
+];
 
 export const corsOptionsDelegate = function (req, callback) {
     let corsOptions;

@@ -68,6 +68,16 @@ const DELETE_EVENT = gql`
   }
 `;
 
+const START_PEER_CXN = gql`
+  mutation addPeerId($input: peerCxnInput!) {
+    addPeerId(input: $input) {
+      _id
+      peerId
+      peerCallEnded
+    }
+  }
+`;
+
 export {
   CREATE_EVENT,
   CREATE_SLOTS,
@@ -75,4 +85,5 @@ export {
   DELETE_SLOT,
   DELETE_EVENT,
   UNBOOK_SLOT,
+  START_PEER_CXN,
 };

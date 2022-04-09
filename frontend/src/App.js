@@ -5,17 +5,18 @@ import SignupForm from './components/Account/Signup';
 import NavBar from './components/NavBar/NavBar';
 import Profile from './components/Profile/Profile';
 import CreateEvent from './components/CreateEvent/CreateEvent';
-import EventCalendar from './components/EventCalendar/EventCalendar';
+import EventCalWrapper from './components/EventCalendar/EventCalWrapper';
+import VideoCall from './components/EventCalendar/VideoCall';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import { Box, CircularProgress } from '@mui/material';
-import Credits from './components/Credits/Credits';
 
 function App() {
-  const { authReady } = useAuth();
+  const { authReady, loggedIn } = useAuth();
   if (!authReady) {
     return (
       <Box display="flex" alignItems="center" justifyContent="center">
+        {' '}
         <CircularProgress />
       </Box>
     );
@@ -26,10 +27,8 @@ function App() {
           <NavBar />
         </header>
         <Routes>
-          <Route path="/credits" element={<Credits />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
-          <Route path="/" exact element={<Navigate replace to="/signup" />} />
           <Route
             path="/profile"
             element={
@@ -50,8 +49,26 @@ function App() {
             path="/cal/:id"
             element={
               <ProtectedRoute>
-                <EventCalendar />
+                <EventCalWrapper />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/video_call/:eventId/:tsId"
+            element={
+              <ProtectedRoute>
+                <VideoCall />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/*"
+            element={
+              loggedIn ? (
+                <Navigate replace to="/profile" />
+              ) : (
+                <Navigate replace to="/signup" />
+              )
             }
           />
         </Routes>

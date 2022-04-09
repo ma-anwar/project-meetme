@@ -1,11 +1,31 @@
 /* eslint no-console: ["error", { allow: ["warn"] }] */
 import http from "http";
+import { ExpressPeerServer } from "peer";
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
 import app from "./app";
-import server from "./server";
+import server, { schema } from "./server";
 import { connectDb } from "./models";
 
 async function startApolloServer(port) {
     const httpServer = http.createServer(app);
+
+    const wsServer = new WebSocketServer({
+        server: httpServer,
+    });
+
+    const serverCleanup = useServer({ schema }, wsServer);
+
+    /*    const peerServer = ExpressPeerServer(httpServer, {
+        debug: true,
+        path: "/meetme",
+        port,
+        proxied: true,
+    });
+    */
+
+    // app.use("/peerjs", peerServer);
+
     await server.start();
     server.applyMiddleware({
         app,
@@ -17,7 +37,7 @@ async function startApolloServer(port) {
     });
     httpServer.listen(port, () => {
         console.log(
-            `🚀 Apollo Server running on http://localhost:${port}/graphql`
+            `🚀 Apollo Server running on http://localhost:${port}${server.graphqlPath}`
         );
     });
 }

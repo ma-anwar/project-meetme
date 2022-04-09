@@ -1,3 +1,4 @@
+//https://stackoverflow.com/questions/54273194/log-apollo-server-graphql-query-and-variables-per-request
 import { ApolloServer } from "apollo-server-express";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 

@@ -1,3 +1,4 @@
+//https://github.com/davidyaha/graphql-redis-subscriptions - dynamic subscriptions
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { withFilter } from "graphql-subscriptions";
 import { getUnixTime, endOfDay, startOfDay, fromUnixTime } from "date-fns";

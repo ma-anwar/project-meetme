@@ -1,3 +1,4 @@
+// https://www.apollographql.com/docs/react/data/subscriptions/  - split communication
 import {
   split,
   ApolloClient,
